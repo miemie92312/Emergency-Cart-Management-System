@@ -1,0 +1,11 @@
+{
+  "name": "抢救车药品巡检助手",
+  "short_name": "抢救车巡检",
+  "description": "离线记录抢救车药品效期、库存和检查情况",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f8fc",
+  "theme_color": "#0b6bcb",
+  "lang": "zh-CN",
+  "icons": []
+}
