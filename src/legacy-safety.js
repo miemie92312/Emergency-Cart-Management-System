@@ -70,7 +70,7 @@ export function readLegacySnapshot(database) {
     for (const name of ['drugs', 'checks', 'settings']) {
       const req = tx.objectStore(name).getAll();
       req.onsuccess = () => {
-        if (name === 'settings') req.result.forEach(({ key, value }) => { if (!forbidden.has(key)) snapshot.settings[key] = value; });
+        if (name === 'settings') req.result.forEach(({ key, value }) => { snapshot.settings[key] = value; });
         else snapshot[name] = req.result;
       };
     }
