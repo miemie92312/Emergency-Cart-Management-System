@@ -67,6 +67,7 @@
       .badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
       .badge { display: inline-flex; align-items: center; padding: 5px 8px; border-radius: 999px; font-size: 12px; font-weight: 720; white-space: nowrap; }
       .badge.normal { color: var(--success); background: var(--success-bg); }
+      .badge.unset { color: var(--muted); background: #edf0f2; }
       .badge.warning { color: var(--warning); background: var(--warning-bg); }
       .badge.expired { color: var(--danger); background: var(--danger-bg); }
       .badge.low { color: #7b4d00; background: #fff4cf; }
@@ -159,7 +160,7 @@
             <option value="expired">已过期</option>
             <option value="low">数量不足</option>
           </select>
-          <button class="btn" id="batchCheckBtn">批量检查</button>
+          <button class="btn" id="batchCheckBtn">批量登记已暂停</button>
           <button class="btn primary" id="addBtn">＋ 添加药品</button>
         </section>
 
@@ -208,7 +209,8 @@
       </form>
     </dialog>
 
-    <script>
+    <script type="module">
+      import { requestStore as safeRequestStore, readLegacySnapshot, restoreLegacy, validateLegacy, validDay } from "./src/legacy-safety.js";
       // Demo 使用浏览器原生 IndexedDB：业务数据不放在 localStorage 中。
       const DB_NAME = "RescueCartDB";
       const DB_VERSION = 1;
@@ -232,7 +234,7 @@
       const parseDateOnly = (value) => {
         if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
         const [year, month, day] = value.split("-").map(Number);
-        return new Date(year, month - 1, day);
+        return validDay(value) ? new Date(year, month - 1, day) : null;
       };
 
       const daysUntil = (value) => {
@@ -244,7 +246,7 @@
 
       const expiryState = (drug) => {
         const days = daysUntil(drug.expiryDate);
-        if (days === null) return { key: "normal", label: "未设置", daysText: "未设置" };
+        if (days === null) return { key: "unset", label: "未设置", daysText: "未设置" };
         if (days < 0) return { key: "expired", label: "已过期", daysText: `已过期 ${Math.abs(days)} 天` };
         if (days <= Number(settings.warningDays)) return { key: "warning", label: "近效期", daysText: `剩余 ${days} 天` };
         return { key: "normal", label: "正常", daysText: `剩余 ${days} 天` };
@@ -273,14 +275,7 @@
       }
 
       function requestStore(storeName, mode, action) {
-        return new Promise((resolve, reject) => {
-          const transaction = db.transaction(storeName, mode);
-          const store = transaction.objectStore(storeName);
-          let request;
-          try { request = action(store); } catch (error) { reject(error); return; }
-          request.onsuccess = () => resolve(request.result);
-          request.onerror = () => reject(request.error);
-        });
+        return safeRequestStore(db, storeName, mode, action);
       }
 
       const getAll = (storeName) => requestStore(storeName, "readonly", (store) => store.getAll());
@@ -288,15 +283,16 @@
       const remove = (storeName, key) => requestStore(storeName, "readwrite", (store) => store.delete(key));
 
       async function loadData() {
-        [drugs, checks] = await Promise.all([getAll(STORES.drugs), getAll(STORES.checks)]);
-        const storedSettings = await getAll(STORES.settings);
-        storedSettings.forEach((item) => { settings[item.key] = item.value; });
+        const snapshot = await readLegacySnapshot(db);
+        drugs = snapshot.drugs; checks = snapshot.checks;
+        settings = { warningDays: 30, lastChecker: "" };
+        for (const key of ["warningDays", "lastChecker"]) if (snapshot.settings[key] !== undefined) settings[key] = snapshot.settings[key];
         render();
       }
 
       async function saveSetting(key, value) {
-        settings[key] = value;
         await put(STORES.settings, { key, value });
+        settings[key] = value;
       }
 
       function showToast(message) {
@@ -308,7 +304,7 @@
       }
 
       function sortDrugs(items) {
-        const rank = { expired: 0, warning: 1, normal: 2 };
+        const rank = { expired: 0, warning: 1, unset: 2, normal: 3 };
         return [...items].sort((a, b) => {
           const aState = expiryState(a); const bState = expiryState(b);
           if (rank[aState.key] !== rank[bState.key]) return rank[aState.key] - rank[bState.key];
@@ -337,6 +333,7 @@
         const history = latestChecks(drug.id);
         const latest = history[0];
         const badges = [`<span class="badge ${state.key}">${state.label}</span>`];
+        if (drug.dataPurpose === "demo") badges.push('<span class="badge">演示数据</span>');
         if (low) badges.push(`<span class="badge low">库存不足</span>`);
         const historyHtml = history.length ? history.slice(0, 10).map((item) => `<div class="history-row"><span>${escapeHtml(item.checker)}${item.remark ? ` · ${escapeHtml(item.remark)}` : ""}</span><span>${formatTime(item.checkedAt)}</span></div>`).join("") : `<p class="hint">暂无检查记录</p>`;
         return `<article class="drug-card">
@@ -350,8 +347,8 @@
             <div class="detail"><span class="detail-label">最近检查</span><strong class="detail-value">${latest ? escapeHtml(formatTime(latest.checkedAt)) : "暂无"}</strong></div>
           </div>
           ${drug.remark ? `<p class="drug-note">备注：${escapeHtml(drug.remark)}</p>` : ""}
-          <div class="check-summary ${latest ? "" : "pending"}">${latest ? `✓ 最近由 ${escapeHtml(latest.checker)} 检查于 ${escapeHtml(formatTime(latest.checkedAt))}` : "⚠ 尚无检查记录"}</div>
-          <div class="card-actions"><button class="btn small primary" data-action="check" data-id="${drug.id}">记录检查</button><button class="btn small" data-action="edit" data-id="${drug.id}">编辑</button><button class="btn small danger" data-action="delete" data-id="${drug.id}">删除</button></div>
+          <div class="check-summary ${latest ? "" : "pending"}">${latest ? `旧版登记（结果未记录）：${escapeHtml(latest.checker)} · ${escapeHtml(formatTime(latest.checkedAt))}` : "⚠ 尚无登记记录"}</div>
+          <div class="card-actions"><button class="btn small primary" data-action="check" data-id="${escapeHtml(drug.id)}">登记本项</button><button class="btn small" data-action="edit" data-id="${escapeHtml(drug.id)}">编辑</button><button class="btn small danger" data-action="delete" data-id="${escapeHtml(drug.id)}">删除</button></div>
           <details><summary>查看检查历史（${history.length} 条）</summary><div class="history">${historyHtml}</div></details>
         </article>`;
       }
@@ -410,6 +407,7 @@
       }
 
       function openCheckDialog(ids) {
+        if (ids.length !== 1) return showToast("请逐项登记，批量点击不代表完成检查。");
         checkingDrugIds = ids;
         $("#checkDialogTitle").textContent = ids.length > 1 ? `批量检查（${ids.length} 条）` : "记录检查";
         $("#checkHint").textContent = ids.length > 1 ? "保存后将为当前药品列表生成检查记录。" : `正在记录：${drugs.find((item) => item.id === ids[0])?.name || "药品"}`;
@@ -421,11 +419,12 @@
 
       async function saveCheck(event) {
         event.preventDefault();
+        if (checkingDrugIds.length !== 1) return showToast("一次只能登记一项。");
         const checker = $("#checkerName").value.trim();
         const remark = $("#checkRemark").value.trim();
         const checkedAt = new Date().toISOString();
         for (const drugId of checkingDrugIds) {
-          const record = { id: crypto.randomUUID(), drugId, checker, remark, checkedAt };
+          const record = { id: crypto.randomUUID(), drugId, checker, remark, checkedAt, recordedAt: checkedAt, source: "manual_item", result: null, timeSource: "device" };
           await put(STORES.checks, record);
           checks.push(record);
         }
@@ -437,13 +436,11 @@
 
       async function deleteDrug(id) {
         const drug = drugs.find((item) => item.id === id);
-        if (!drug || !confirm(`确定删除“${drug.name}”吗？删除后仍可通过备份恢复。`)) return;
+        if (!drug || !confirm(`确定删除“${drug.name}”吗？检查历史保留；仅已有独立备份时可恢复药品。`)) return;
         await remove(STORES.drugs, id);
-        for (const item of checks.filter((check) => check.drugId === id)) await remove(STORES.checks, item.id);
         drugs = drugs.filter((item) => item.id !== id);
-        checks = checks.filter((item) => item.drugId !== id);
         render();
-        showToast("药品及其检查记录已删除");
+        showToast("药品已删除，检查历史保留在完整备份中");
       }
 
       function downloadJson(filename, data) {
@@ -454,27 +451,23 @@
         setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
 
-      function exportData() {
+      async function exportData() {
         const stamp = todayString().replaceAll("-", "");
-        downloadJson(`抢救车药品数据_${stamp}.json`, { version: "1.0", exportTime: new Date().toISOString(), data: { drugs, checks, settings } });
-        showToast("备份文件已生成");
+        const snapshot = await readLegacySnapshot(db);
+        downloadJson(`抢救车药品数据_${stamp}.json`, { version: "1.0", exportTime: new Date().toISOString(), data: snapshot });
+        showToast("备份文件已生成，请确认已另存");
       }
 
       async function importData(file) {
         try {
-          const parsed = JSON.parse(await file.text());
-          const payload = parsed?.data || parsed;
-          if (!Array.isArray(payload?.drugs) || !Array.isArray(payload?.checks)) throw new Error("invalid");
-          if (!confirm("导入备份会覆盖当前本地数据，确定继续吗？")) return;
-          for (const item of drugs) await remove(STORES.drugs, item.id);
-          for (const item of checks) await remove(STORES.checks, item.id);
-          for (const item of payload.drugs) await put(STORES.drugs, item);
-          for (const item of payload.checks) await put(STORES.checks, item);
-          if (payload.settings) for (const [key, value] of Object.entries(payload.settings)) await saveSetting(key, value);
+          if (file.size > 20 * 1024 * 1024) throw new Error("当前文件处理上限为 20MB，请检查备份。");
+          const payload = validateLegacy(JSON.parse(await file.text()));
+          if (!confirm(`将恢复 ${payload.drugs.length} 条药品、${payload.checks.length} 条登记。请先导出当前备份；继续将覆盖当前数据。`)) return;
+          await restoreLegacy(db, payload);
           await loadData();
           showToast("备份已恢复");
         } catch (error) {
-          showToast("文件格式不正确");
+          showToast(error.message || "恢复失败，原数据保持不变");
         }
       }
 
@@ -483,7 +476,7 @@
           { name: "肾上腺素", specification: "1mg/ml", quantity: 10, minimumQuantity: 3, batchNumber: "DEMO-001", expiryDate: "2027-03-30", location: "1号抽屉", remark: "示例数据，可编辑或删除", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
           { name: "葡萄糖注射液", specification: "50%·20ml", quantity: 2, minimumQuantity: 5, batchNumber: "DEMO-002", expiryDate: "2026-09-05", location: "2号抽屉", remark: "用于演示库存不足提醒", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
           { name: "阿托品注射液", specification: "0.5mg/ml", quantity: 8, minimumQuantity: 3, batchNumber: "DEMO-003", expiryDate: "2026-08-10", location: "1号抽屉", remark: "用于演示过期提醒", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-        ].map((item) => ({ ...item, id: crypto.randomUUID() }));
+        ].map((item) => ({ ...item, dataPurpose: "demo", id: crypto.randomUUID() }));
         for (const item of sample) await put(STORES.drugs, item);
         drugs.push(...sample); render(); showToast("已载入 3 条示例数据");
       }
@@ -496,7 +489,7 @@
         $("#importInput").addEventListener("change", (event) => { const [file] = event.target.files; if (file) importData(file); event.target.value = ""; });
         $("#searchInput").addEventListener("input", render);
         $("#filterSelect").addEventListener("change", render);
-        $("#batchCheckBtn").addEventListener("click", () => { const ids = filteredDrugs().map((item) => item.id); if (!ids.length) return showToast("当前没有可检查的药品"); openCheckDialog(ids); });
+        $("#batchCheckBtn").addEventListener("click", () => showToast("请打开每项的登记入口，不能批量生成逐项检查记录。"));
         $("#drugForm").addEventListener("submit", saveDrug);
         $("#checkForm").addEventListener("submit", saveCheck);
         $("#settingsForm").addEventListener("submit", async (event) => { event.preventDefault(); await saveSetting("warningDays", Number($("#warningDays").value)); $("#settingsDialog").close(); render(); showToast("巡检设置已保存"); });
@@ -516,6 +509,7 @@
         }
       }
 
+      window.addEventListener("unhandledrejection", (event) => { event.preventDefault(); showToast(event.reason?.message || "操作未保存，请重试。"); });
       init();
     </script>
   </body>

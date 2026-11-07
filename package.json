@@ -1,0 +1,26 @@
+{
+  "name": "personal-emergency-cart-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.0.0" },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "test": "vitest run",
+    "build": "node scripts/icons.mjs && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "licenses": "node scripts/licenses.mjs"
+  },
+  "dependencies": {
+    "dexie": "4.4.7",
+    "zod": "4.6.7",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  },
+  "devDependencies": {
+    "vite": "8.3.6",
+    "vite-plugin-pwa": "2.0.0",
+    "vitest": "5.1.0",
+    "fake-indexeddb": "6.2.7",
+    "sharp": "0.35.5"
+  }
+}
