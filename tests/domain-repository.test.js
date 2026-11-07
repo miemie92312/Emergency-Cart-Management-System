@@ -2,8 +2,9 @@ import {it,expect,afterEach} from 'vitest';
 import 'fake-indexeddb/auto';
 import { Repository,createDatabase } from '../src/repository.js';
 import { emptyData,validateData,expiryStatus,migrateLegacy,makeBackup,parseBackup,today,plusDays } from '../src/domain.js';
-import { hydrate,dehydrate,demoCartData } from '../src/view-model.js';
+import { hydrate,dehydrate,demoCartData,createStockChange } from '../src/view-model.js';
 const dbs=[];
+it('数量变化拥有独立主键并与数量在同一事务持久化',async()=>{const r=await repo(),state=hydrate({data:sample(),generation:0}),item=state.items.find(it=>it.batches?.length===2),before=item.batches.reduce((sum,b)=>sum+b.quantity,0);item.batches[0].quantity+=2;item.pendingRecheck=true;const change=createStockChange(item,{before,after:before+2,label:'补充',reason:'合成测试'});state.changes.unshift(change);await r.save(dehydrate(state),0);const loaded=hydrate(await r.snapshot());expect(loaded.changes[0]).toMatchObject({id:change.id,cartId:item.cartId,itemId:item.id,before,after:before+2});expect(loaded.items.find(it=>it.id===item.id).batches.reduce((sum,b)=>sum+b.quantity,0)).toBe(before+2);expect(loaded.records).toHaveLength(0);expect(createStockChange(item,{}).id).not.toBe(change.id);});
 async function repo(){const db=createDatabase('test-'+crypto.randomUUID());dbs.push(db);const r=new Repository(db);await r.initialize();return r;}
 function sample(){const state=hydrate({data:emptyData(),generation:0});demoCartData(state,'2026-11-07',plusDays);return dehydrate(state);}
 afterEach(async()=>{for(const db of dbs.splice(0))await db.delete();});

@@ -71,6 +71,7 @@ export function validateData(input) {
     if(r.itemId&&(!maps.items.has(r.itemId)||maps.items.get(r.itemId).cartId!==r.cartId))throw Error('历史关联的物品或车不一致。');
   }
   for(const it of data.items){if(it.quantityMode==='batches'){const total=data.batches.filter(b=>b.itemId===it.id&&!b.archivedAt).reduce((s,b)=>s+b.quantity,0);if(!Number.isSafeInteger(total))throw Error('批次数量合计超出整数范围。');}}
+  for(const change of data.changes)if(change.batchId&&maps.batches.get(change.batchId)?.itemId!==change.itemId)throw Error('数量变化关联的批次与物品不一致。');
   const warning=maps.settings.get('warningDays')?.value;
   if(!Number.isSafeInteger(warning)||warning<0||warning>3650)throw Error('预警天数须为 0 至 3650 的整数。');
   for(const field of data.fields)for(const it of data.items){const v=it.customValues?.[field.id];if(v==null||v==='')continue;if(field.kind==='number'&&typeof v!=='number')throw Error('数字扩展字段的值类型不匹配。');if(field.kind==='date'&&!validDay(v))throw Error('日期扩展字段的值不合法。');}

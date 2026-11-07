@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0b6bcb" />
+    <meta name="description" content="离线抢救车药品巡检助手" />
+    
+    <title>抢救车药品巡检助手</title>
+    <style>
+      :root {
+        --blue-700: #0759aa;
+        --blue-600: #0b6bcb;
+        --blue-100: #e7f2ff;
+        --ink: #17324d;
+        --muted: #6f8295;
+        --line: #dbe7f2;
+        --surface: #ffffff;
+        --bg: #f4f8fc;
+        --danger: #d9485f;
+        --danger-bg: #fff0f2;
+        --warning: #c66a00;
+        --warning-bg: #fff5e7;
+        --success: #087443;
+        --success-bg: #e8f8f0;
+        --shadow: 0 12px 32px rgba(30, 83, 133, 0.08);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+
+      * { box-sizing: border-box; }
+      body { margin: 0; min-width: 320px; background: var(--bg); }
+      button, input, select, textarea { font: inherit; }
+      button { cursor: pointer; }
+      .app-shell { min-height: 100vh; padding-bottom: 86px; }
+      .topbar { color: #fff; background: linear-gradient(135deg, var(--blue-700), var(--blue-600)); }
+      .topbar-inner, .content { width: min(100% - 28px, 1040px); margin: 0 auto; }
+      .topbar-inner { padding: 22px 0 20px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+      .eyebrow { margin: 0 0 6px; opacity: .78; font-size: 12px; letter-spacing: .08em; }
+      h1 { margin: 0; font-size: clamp(23px, 5vw, 32px); line-height: 1.15; }
+      .subtitle { margin: 8px 0 0; color: rgba(255,255,255,.8); font-size: 13px; }
+      .top-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+      .top-actions button { background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.28); }
+      .content { padding-top: 18px; }
+      .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+      .stat { padding: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+      .stat-label { color: var(--muted); font-size: 12px; }
+      .stat-value { display: block; margin-top: 5px; font-size: 25px; font-weight: 760; }
+      .stat.warning .stat-value { color: var(--warning); }
+      .stat.danger .stat-value { color: var(--danger); }
+      .toolbar { display: grid; grid-template-columns: minmax(180px, 1fr) 170px auto auto; gap: 9px; margin-bottom: 16px; }
+      .field, select, textarea { width: 100%; padding: 11px 12px; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 11px; outline: none; }
+      .field:focus, select:focus, textarea:focus { border-color: var(--blue-600); box-shadow: 0 0 0 3px rgba(11,107,203,.12); }
+      textarea { resize: vertical; min-height: 78px; }
+      .btn { border: 1px solid var(--line); border-radius: 11px; padding: 10px 14px; font-weight: 650; white-space: nowrap; background: #fff; color: var(--ink); }
+      .btn:hover { filter: brightness(.98); }
+      .btn.primary { color: #fff; background: var(--blue-600); border-color: var(--blue-600); }
+      .btn.ghost { background: rgba(255,255,255,.12); }
+      .btn.danger { color: var(--danger); border-color: #f3c6cd; background: var(--danger-bg); }
+      .btn.small { padding: 8px 10px; font-size: 13px; }
+      .list { display: grid; gap: 12px; }
+      .drug-card { padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 17px; box-shadow: var(--shadow); }
+      .drug-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+      .drug-name { margin: 0; font-size: 18px; line-height: 1.35; }
+      .drug-spec { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+      .badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+      .badge { display: inline-flex; align-items: center; padding: 5px 8px; border-radius: 999px; font-size: 12px; font-weight: 720; white-space: nowrap; }
+      .badge.normal { color: var(--success); background: var(--success-bg); }
+      .badge.unset { color: var(--muted); background: #edf0f2; }
+      .badge.warning { color: var(--warning); background: var(--warning-bg); }
+      .badge.expired { color: var(--danger); background: var(--danger-bg); }
+      .badge.low { color: #7b4d00; background: #fff4cf; }
+      .drug-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+      .detail { padding: 10px; background: #f8fbfe; border-radius: 11px; }
+      .detail-label { color: var(--muted); display: block; font-size: 12px; }
+      .detail-value { display: block; margin-top: 4px; font-weight: 650; font-size: 14px; overflow-wrap: anywhere; }
+      .detail-value.expired { color: var(--danger); }
+      .detail-value.warning { color: var(--warning); }
+      .drug-note { margin: 0 0 12px; color: #49657f; font-size: 13px; white-space: pre-wrap; }
+      .check-summary { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+      .check-summary.pending { color: var(--warning); }
+      .card-actions { display: flex; gap: 8px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 12px; }
+      details { margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 10px; }
+      summary { color: var(--blue-700); font-size: 13px; cursor: pointer; }
+      .history { display: grid; gap: 6px; margin-top: 10px; }
+      .history-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 10px; background: #f8fbfe; border-radius: 8px; color: #4e6880; font-size: 12px; }
+      .empty { padding: 38px 20px; text-align: center; background: #fff; border: 1px dashed #b7cde0; border-radius: 17px; }
+      .empty-icon { font-size: 42px; }
+      .empty h2 { margin: 10px 0 6px; font-size: 20px; }
+      .empty p { margin: 0 auto 18px; max-width: 440px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+      .footer-notice { position: fixed; z-index: 5; right: 0; bottom: 0; left: 0; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); color: #587189; background: rgba(246,250,253,.96); border-top: 1px solid var(--line); text-align: center; font-size: 11px; backdrop-filter: blur(10px); }
+      dialog { width: min(calc(100% - 28px), 560px); max-height: min(90vh, 820px); padding: 0; color: var(--ink); border: 0; border-radius: 18px; box-shadow: 0 28px 80px rgba(12, 49, 83, .25); }
+      dialog::backdrop { background: rgba(9, 32, 56, .45); backdrop-filter: blur(2px); }
+      .modal { padding: 20px; }
+      .modal-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 16px; }
+      .modal-head h2 { margin: 0; font-size: 20px; }
+      .icon-btn { width: 34px; height: 34px; border: 0; border-radius: 50%; background: #eff5fa; color: var(--ink); font-size: 20px; }
+      .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .form-field { display: grid; gap: 6px; }
+      .form-field.full { grid-column: 1 / -1; }
+      label { color: #4f6a81; font-size: 13px; font-weight: 650; }
+      .required::after { content: " *"; color: var(--danger); }
+      .modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 18px; }
+      .hint { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+      .toast { position: fixed; z-index: 20; right: 14px; bottom: 62px; max-width: calc(100% - 28px); padding: 11px 14px; color: #fff; background: #17324d; border-radius: 11px; box-shadow: var(--shadow); font-size: 13px; opacity: 0; transform: translateY(10px); pointer-events: none; transition: .2s ease; }
+      .toast.show { opacity: 1; transform: translateY(0); }
+      .hidden { display: none !important; }
+
+      @media (max-width: 680px) {
+        .topbar-inner { display: block; }
+        .top-actions { margin-top: 14px; justify-content: flex-start; }
+        .toolbar { grid-template-columns: 1fr 1fr; }
+        .toolbar .search { grid-column: 1 / -1; }
+        .toolbar .btn { width: 100%; }
+        .drug-grid { grid-template-columns: 1fr 1fr; }
+      }
+      @media (max-width: 430px) {
+        .topbar-inner, .content { width: min(100% - 20px, 1040px); }
+        .stats { gap: 7px; }
+        .stat { padding: 11px 9px; }
+        .stat-value { font-size: 22px; }
+        .drug-head { display: block; }
+        .badges { justify-content: flex-start; margin-top: 10px; }
+        .form-grid { grid-template-columns: 1fr; }
+        .form-field.full { grid-column: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <div>
+            <p class="eyebrow">OFFLINE · PERSONAL TOOL</p>
+            <h1>旧版只读与备份</h1>
+            <p class="subtitle">旧 RescueCartDB 原样保留。此页仅查看与导出迁移前数据；新版记录不回写此库。</p>
+          </div>
+          <div class="top-actions">
+            <button class="btn ghost" id="settingsBtn">设置</button>
+            <button class="btn ghost" id="exportBtn">导出备份</button>
+            <button class="btn ghost" id="importBtn">导入备份</button>
+            <input id="importInput" type="file" accept="application/json,.json" class="hidden" />
+          </div>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="stats" aria-label="数据统计">
+          <div class="stat"><span class="stat-label">药品记录</span><strong class="stat-value" id="totalCount">0</strong></div>
+          <div class="stat warning"><span class="stat-label">近效期</span><strong class="stat-value" id="warningCount">0</strong></div>
+          <div class="stat danger"><span class="stat-label">已过期</span><strong class="stat-value" id="expiredCount">0</strong></div>
+        </section>
+
+        <section class="toolbar" aria-label="药品操作">
+          <input class="field search" id="searchInput" type="search" placeholder="搜索药品名称、批号或位置" />
+          <select id="filterSelect" aria-label="筛选药品">
+            <option value="all">全部记录</option>
+            <option value="warning">近效期</option>
+            <option value="expired">已过期</option>
+            <option value="low">数量不足</option>
+          </select>
+          <button class="btn" id="batchCheckBtn">批量登记已暂停</button>
+          <button class="btn primary" id="addBtn">＋ 添加药品</button>
+        </section>
+
+        <section id="drugList" class="list" aria-live="polite"></section>
+      </main>
+
+      <footer class="footer-notice">本工具仅供个人记录参考，不替代医院正式管理系统，请勿用于临床决策。</footer>
+      <div id="toast" class="toast" role="status"></div>
+    </div>
+
+    <dialog id="drugDialog">
+      <form id="drugForm" class="modal">
+        <div class="modal-head">
+          <h2 id="drugDialogTitle">添加药品</h2>
+          <button type="button" class="icon-btn" data-close="drugDialog" aria-label="关闭">×</button>
+        </div>
+        <div class="form-grid">
+          <div class="form-field"><label class="required" for="drugName">药品名称</label><input class="field" id="drugName" required placeholder="例如：肾上腺素" /></div>
+          <div class="form-field"><label for="drugSpecification">规格</label><input class="field" id="drugSpecification" placeholder="例如：1mg/ml" /></div>
+          <div class="form-field"><label class="required" for="drugQuantity">数量</label><input class="field" id="drugQuantity" required type="number" min="0" step="1" value="0" /></div>
+          <div class="form-field"><label for="drugMinimumQuantity">最低库存提醒</label><input class="field" id="drugMinimumQuantity" type="number" min="0" step="1" value="3" /></div>
+          <div class="form-field"><label for="drugBatch">批号</label><input class="field" id="drugBatch" placeholder="可选" /></div>
+          <div class="form-field"><label class="required" for="drugExpiry">有效期至</label><input class="field" id="drugExpiry" required type="date" /></div>
+          <div class="form-field"><label for="drugLocation">存放位置</label><input class="field" id="drugLocation" placeholder="例如：1号抽屉" /></div>
+          <div class="form-field full"><label for="drugRemark">备注</label><textarea id="drugRemark" placeholder="可记录包装、补充或其他需要注意的事项"></textarea></div>
+        </div>
+        <div class="modal-actions"><button type="button" class="btn" data-close="drugDialog">取消</button><button class="btn primary" type="submit">保存药品</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="checkDialog">
+      <form id="checkForm" class="modal">
+        <div class="modal-head"><h2 id="checkDialogTitle">记录检查</h2><button type="button" class="icon-btn" data-close="checkDialog" aria-label="关闭">×</button></div>
+        <p class="hint" id="checkHint"></p>
+        <div class="form-field" style="margin-top:14px"><label class="required" for="checkerName">检查人</label><input class="field" id="checkerName" required placeholder="请输入检查人姓名" /></div>
+        <div class="form-field" style="margin-top:12px"><label for="checkRemark">检查备注</label><textarea id="checkRemark" placeholder="可选，例如：已补充、包装完好"></textarea></div>
+        <div class="modal-actions"><button type="button" class="btn" data-close="checkDialog">取消</button><button class="btn primary" type="submit">保存检查记录</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="settingsDialog">
+      <form id="settingsForm" class="modal">
+        <div class="modal-head"><h2>巡检设置</h2><button type="button" class="icon-btn" data-close="settingsDialog" aria-label="关闭">×</button></div>
+        <div class="form-field"><label class="required" for="warningDays">近效期提醒天数</label><input class="field" id="warningDays" required type="number" min="0" max="3650" step="1" /><p class="hint">有效期距离今天不超过此天数时，显示“近效期”。</p></div>
+        <div class="modal-actions"><button type="button" class="btn" data-close="settingsDialog">取消</button><button class="btn primary" type="submit">保存设置</button></div>
+      </form>
+    </dialog>
+
+    <script type="module">
+      import { requestStore as safeRequestStore, readLegacySnapshot, restoreLegacy, validateLegacy, validDay } from "../src/legacy-safety.js";
+      // Demo 使用浏览器原生 IndexedDB：业务数据不放在 localStorage 中。
+      const DB_NAME = "RescueCartDB";
+      const DB_VERSION = 1;
+      const STORES = { drugs: "drugs", checks: "checks", settings: "settings" };
+      let db;
+      let drugs = [];
+      let checks = [];
+      let settings = { warningDays: 30, lastChecker: "" };
+      let editingDrugId = null;
+      let checkingDrugIds = [];
+      let toastTimer;
+
+      const $ = (selector) => document.querySelector(selector);
+      const todayString = () => {
+        const date = new Date();
+        const pad = (value) => String(value).padStart(2, "0");
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+      };
+
+      // 按本地时区解析 YYYY-MM-DD，避免浏览器按 UTC 解析导致日期偏差。
+      const parseDateOnly = (value) => {
+        if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+        const [year, month, day] = value.split("-").map(Number);
+        return validDay(value) ? new Date(year, month - 1, day) : null;
+      };
+
+      const daysUntil = (value) => {
+        const target = parseDateOnly(value);
+        const today = parseDateOnly(todayString());
+        if (!target || !today) return null;
+        return Math.round((target - today) / 86400000);
+      };
+
+      const expiryState = (drug) => {
+        const days = daysUntil(drug.expiryDate);
+        if (days === null) return { key: "unset", label: "未设置", daysText: "未设置" };
+        if (days < 0) return { key: "expired", label: "已过期", daysText: `已过期 ${Math.abs(days)} 天` };
+        if (days <= Number(settings.warningDays)) return { key: "warning", label: "近效期", daysText: `剩余 ${days} 天` };
+        return { key: "normal", label: "正常", daysText: `剩余 ${days} 天` };
+      };
+
+      const isLowStock = (drug) => Number(drug.quantity) < Number(drug.minimumQuantity ?? 3);
+      const formatTime = (value) => value ? new Date(value).toLocaleString("zh-CN", { hour12: false }) : "暂无";
+      const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
+
+      function openDatabase() {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(DB_NAME, DB_VERSION);
+          request.onupgradeneeded = () => {
+            const database = request.result;
+            if (!database.objectStoreNames.contains(STORES.drugs)) database.createObjectStore(STORES.drugs, { keyPath: "id" });
+            if (!database.objectStoreNames.contains(STORES.checks)) {
+              const store = database.createObjectStore(STORES.checks, { keyPath: "id" });
+              store.createIndex("drugId", "drugId", { unique: false });
+              store.createIndex("checkedAt", "checkedAt", { unique: false });
+            }
+            if (!database.objectStoreNames.contains(STORES.settings)) database.createObjectStore(STORES.settings, { keyPath: "key" });
+          };
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+      }
+
+      function requestStore(storeName, mode, action) {
+        return safeRequestStore(db, storeName, mode, action);
+      }
+
+      const getAll = (storeName) => requestStore(storeName, "readonly", (store) => store.getAll());
+      const put = (storeName, value) => requestStore(storeName, "readwrite", (store) => store.put(value));
+      const remove = (storeName, key) => requestStore(storeName, "readwrite", (store) => store.delete(key));
+
+      async function loadData() {
+        const snapshot = await readLegacySnapshot(db);
+        drugs = snapshot.drugs; checks = snapshot.checks;
+        settings = { warningDays: 30, lastChecker: "" };
+        for (const key of ["warningDays", "lastChecker"]) if (snapshot.settings[key] !== undefined) settings[key] = snapshot.settings[key];
+        render();
+      }
+
+      async function saveSetting(key, value) {
+        await put(STORES.settings, { key, value });
+        settings[key] = value;
+      }
+
+      function showToast(message) {
+        const element = $("#toast");
+        element.textContent = message;
+        element.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => element.classList.remove("show"), 2600);
+      }
+
+      function sortDrugs(items) {
+        const rank = { expired: 0, warning: 1, unset: 2, normal: 3 };
+        return [...items].sort((a, b) => {
+          const aState = expiryState(a); const bState = expiryState(b);
+          if (rank[aState.key] !== rank[bState.key]) return rank[aState.key] - rank[bState.key];
+          return (a.expiryDate || "9999-12-31").localeCompare(b.expiryDate || "9999-12-31") || a.name.localeCompare(b.name, "zh-CN");
+        });
+      }
+
+      function filteredDrugs() {
+        const keyword = $("#searchInput").value.trim().toLowerCase();
+        const filter = $("#filterSelect").value;
+        return sortDrugs(drugs.filter((drug) => {
+          const state = expiryState(drug).key;
+          const matchesKeyword = !keyword || [drug.name, drug.batchNumber, drug.location, drug.specification].some((value) => String(value || "").toLowerCase().includes(keyword));
+          const matchesFilter = filter === "all" || (filter === "low" ? isLowStock(drug) : state === filter);
+          return matchesKeyword && matchesFilter;
+        }));
+      }
+
+      function latestChecks(drugId) {
+        return checks.filter((item) => item.drugId === drugId).sort((a, b) => new Date(b.checkedAt) - new Date(a.checkedAt));
+      }
+
+      function drugCard(drug) {
+        const state = expiryState(drug);
+        const low = isLowStock(drug);
+        const history = latestChecks(drug.id);
+        const latest = history[0];
+        const badges = [`<span class="badge ${state.key}">${state.label}</span>`];
+        if (drug.dataPurpose === "demo") badges.push('<span class="badge">演示数据</span>');
+        if (low) badges.push(`<span class="badge low">库存不足</span>`);
+        const historyHtml = history.length ? history.slice(0, 10).map((item) => `<div class="history-row"><span>${escapeHtml(item.checker)}${item.remark ? ` · ${escapeHtml(item.remark)}` : ""}</span><span>${formatTime(item.checkedAt)}</span></div>`).join("") : `<p class="hint">暂无检查记录</p>`;
+        return `<article class="drug-card">
+          <div class="drug-head"><div><h2 class="drug-name">${escapeHtml(drug.name)}</h2><p class="drug-spec">${escapeHtml(drug.specification || "未填写规格")}</p></div><div class="badges">${badges.join("")}</div></div>
+          <div class="drug-grid">
+            <div class="detail"><span class="detail-label">当前数量 / 最低库存</span><strong class="detail-value">${escapeHtml(drug.quantity)} / ${escapeHtml(drug.minimumQuantity ?? 3)}</strong></div>
+            <div class="detail"><span class="detail-label">有效期</span><strong class="detail-value ${state.key}">${escapeHtml(drug.expiryDate || "未设置")}</strong></div>
+            <div class="detail"><span class="detail-label">剩余时间</span><strong class="detail-value ${state.key}">${escapeHtml(state.daysText)}</strong></div>
+            <div class="detail"><span class="detail-label">批号</span><strong class="detail-value">${escapeHtml(drug.batchNumber || "未填写")}</strong></div>
+            <div class="detail"><span class="detail-label">存放位置</span><strong class="detail-value">${escapeHtml(drug.location || "未填写")}</strong></div>
+            <div class="detail"><span class="detail-label">最近检查</span><strong class="detail-value">${latest ? escapeHtml(formatTime(latest.checkedAt)) : "暂无"}</strong></div>
+          </div>
+          ${drug.remark ? `<p class="drug-note">备注：${escapeHtml(drug.remark)}</p>` : ""}
+          <div class="check-summary ${latest ? "" : "pending"}">${latest ? `旧版登记（结果未记录）：${escapeHtml(latest.checker)} · ${escapeHtml(formatTime(latest.checkedAt))}` : "⚠ 尚无登记记录"}</div>
+          <div class="card-actions"><button class="btn small primary" data-action="check" data-id="${escapeHtml(drug.id)}">登记本项</button><button class="btn small" data-action="edit" data-id="${escapeHtml(drug.id)}">编辑</button><button class="btn small danger" data-action="delete" data-id="${escapeHtml(drug.id)}">删除</button></div>
+          <details><summary>查看检查历史（${history.length} 条）</summary><div class="history">${historyHtml}</div></details>
+        </article>`;
+      }
+
+      function render() {
+        const states = drugs.map(expiryState);
+        $("#totalCount").textContent = drugs.length;
+        $("#warningCount").textContent = states.filter((state) => state.key === "warning").length;
+        $("#expiredCount").textContent = states.filter((state) => state.key === "expired").length;
+        const list = filteredDrugs();
+        if (!list.length) {
+          const hasData = drugs.length > 0;
+          $("#drugList").innerHTML = `<div class="empty"><div class="empty-icon">${hasData ? "🔎" : "🧰"}</div><h2>${hasData ? "没有符合条件的记录" : "还没有药品记录"}</h2><p>${hasData ? "可以更换筛选条件或搜索关键词。" : "点击添加药品开始建立抢救车药品清单。数据会保存在本设备的浏览器中。"}</p>${hasData ? "" : `<button class="btn" id="sampleBtn">载入示例数据</button>`}</div>`;
+          $("#sampleBtn")?.addEventListener("click", seedSampleData);
+          return;
+        }
+        $("#drugList").innerHTML = list.map(drugCard).join("");
+      }
+
+      function openDrugDialog(drug = null) {
+        editingDrugId = drug?.id || null;
+        $("#drugDialogTitle").textContent = drug ? "编辑药品" : "添加药品";
+        $("#drugName").value = drug?.name || "";
+        $("#drugSpecification").value = drug?.specification || "";
+        $("#drugQuantity").value = drug?.quantity ?? 0;
+        $("#drugMinimumQuantity").value = drug?.minimumQuantity ?? 3;
+        $("#drugBatch").value = drug?.batchNumber || "";
+        $("#drugExpiry").value = drug?.expiryDate || "";
+        $("#drugLocation").value = drug?.location || "";
+        $("#drugRemark").value = drug?.remark || "";
+        $("#drugDialog").showModal();
+      }
+
+      async function saveDrug(event) {
+        event.preventDefault();
+        const old = drugs.find((item) => item.id === editingDrugId);
+        const now = new Date().toISOString();
+        const drug = {
+          id: editingDrugId || crypto.randomUUID(),
+          name: $("#drugName").value.trim(),
+          specification: $("#drugSpecification").value.trim(),
+          quantity: Number($("#drugQuantity").value),
+          minimumQuantity: Number($("#drugMinimumQuantity").value),
+          batchNumber: $("#drugBatch").value.trim(),
+          expiryDate: $("#drugExpiry").value,
+          location: $("#drugLocation").value.trim(),
+          remark: $("#drugRemark").value.trim(),
+          createdAt: old?.createdAt || now,
+          updatedAt: now,
+        };
+        await put(STORES.drugs, drug);
+        drugs = old ? drugs.map((item) => item.id === drug.id ? drug : item) : [...drugs, drug];
+        $("#drugDialog").close();
+        render();
+        showToast(old ? "药品信息已更新" : "药品已添加");
+      }
+
+      function openCheckDialog(ids) {
+        if (ids.length !== 1) return showToast("请逐项登记，批量点击不代表完成检查。");
+        checkingDrugIds = ids;
+        $("#checkDialogTitle").textContent = ids.length > 1 ? `批量检查（${ids.length} 条）` : "记录检查";
+        $("#checkHint").textContent = ids.length > 1 ? "保存后将为当前药品列表生成检查记录。" : `正在记录：${drugs.find((item) => item.id === ids[0])?.name || "药品"}`;
+        $("#checkerName").value = settings.lastChecker || "";
+        $("#checkRemark").value = "";
+        $("#checkDialog").showModal();
+        setTimeout(() => $("#checkerName").focus(), 50);
+      }
+
+      async function saveCheck(event) {
+        event.preventDefault();
+        if (checkingDrugIds.length !== 1) return showToast("一次只能登记一项。");
+        const checker = $("#checkerName").value.trim();
+        const remark = $("#checkRemark").value.trim();
+        const checkedAt = new Date().toISOString();
+        for (const drugId of checkingDrugIds) {
+          const record = { id: crypto.randomUUID(), drugId, checker, remark, checkedAt, recordedAt: checkedAt, source: "manual_item", result: null, timeSource: "device" };
+          await put(STORES.checks, record);
+          checks.push(record);
+        }
+        await saveSetting("lastChecker", checker);
+        $("#checkDialog").close();
+        render();
+        showToast(checkingDrugIds.length > 1 ? `已完成 ${checkingDrugIds.length} 条检查记录` : "检查记录已保存");
+      }
+
+      async function deleteDrug(id) {
+        const drug = drugs.find((item) => item.id === id);
+        if (!drug || !confirm(`确定删除“${drug.name}”吗？检查历史保留；仅已有独立备份时可恢复药品。`)) return;
+        await remove(STORES.drugs, id);
+        drugs = drugs.filter((item) => item.id !== id);
+        render();
+        showToast("药品已删除，检查历史保留在完整备份中");
+      }
+
+      function downloadJson(filename, data) {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url; link.download = filename; link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      async function exportData() {
+        const stamp = todayString().replaceAll("-", "");
+        const snapshot = await readLegacySnapshot(db);
+        downloadJson(`抢救车药品数据_${stamp}.json`, { version: "1.0", exportTime: new Date().toISOString(), data: snapshot });
+        showToast("备份文件已生成，请确认已另存");
+      }
+
+      async function importData(file) {
+        try {
+          if (file.size > 20 * 1024 * 1024) throw new Error("当前文件处理上限为 20MB，请检查备份。");
+          const payload = validateLegacy(JSON.parse(await file.text()));
+          if (!confirm(`将恢复 ${payload.drugs.length} 条药品、${payload.checks.length} 条登记。请先导出当前备份；继续将覆盖当前数据。`)) return;
+          await restoreLegacy(db, payload);
+          await loadData();
+          showToast("备份已恢复");
+        } catch (error) {
+          showToast(error.message || "恢复失败，原数据保持不变");
+        }
+      }
+
+      async function seedSampleData() {
+        const sample = [
+          { name: "肾上腺素", specification: "1mg/ml", quantity: 10, minimumQuantity: 3, batchNumber: "DEMO-001", expiryDate: "2027-03-30", location: "1号抽屉", remark: "示例数据，可编辑或删除", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+          { name: "葡萄糖注射液", specification: "50%·20ml", quantity: 2, minimumQuantity: 5, batchNumber: "DEMO-002", expiryDate: "2026-09-05", location: "2号抽屉", remark: "用于演示库存不足提醒", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+          { name: "阿托品注射液", specification: "0.5mg/ml", quantity: 8, minimumQuantity: 3, batchNumber: "DEMO-003", expiryDate: "2026-08-10", location: "1号抽屉", remark: "用于演示过期提醒", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+        ].map((item) => ({ ...item, dataPurpose: "demo", id: crypto.randomUUID() }));
+        for (const item of sample) await put(STORES.drugs, item);
+        drugs.push(...sample); render(); showToast("已载入 3 条示例数据");
+      }
+
+      function bindEvents() {
+        $("#addBtn").addEventListener("click", () => openDrugDialog());
+        $("#settingsBtn").addEventListener("click", () => { $("#warningDays").value = settings.warningDays; $("#settingsDialog").showModal(); });
+        $("#exportBtn").addEventListener("click", exportData);
+        $("#importBtn").addEventListener("click", () => $("#importInput").click());
+        $("#importInput").addEventListener("change", (event) => { const [file] = event.target.files; if (file) importData(file); event.target.value = ""; });
+        $("#searchInput").addEventListener("input", render);
+        $("#filterSelect").addEventListener("change", render);
+        $("#batchCheckBtn").addEventListener("click", () => showToast("请打开每项的登记入口，不能批量生成逐项检查记录。"));
+        $("#drugForm").addEventListener("submit", saveDrug);
+        $("#checkForm").addEventListener("submit", saveCheck);
+        $("#settingsForm").addEventListener("submit", async (event) => { event.preventDefault(); await saveSetting("warningDays", Number($("#warningDays").value)); $("#settingsDialog").close(); render(); showToast("巡检设置已保存"); });
+        $("#drugList").addEventListener("click", (event) => { const button = event.target.closest("[data-action]"); if (!button) return; const id = button.dataset.id; const drug = drugs.find((item) => item.id === id); if (button.dataset.action === "edit") openDrugDialog(drug); if (button.dataset.action === "check") openCheckDialog([id]); if (button.dataset.action === "delete") deleteDrug(id); });
+        document.querySelectorAll("[data-close]").forEach((button) => button.addEventListener("click", () => document.getElementById(button.dataset.close).close()));
+      }
+
+      async function init() {
+        try {
+          db = await openDatabase();
+          bindEvents();
+          await loadData();
+          document.querySelectorAll("button,input,select,textarea").forEach(el => { if(el.id !== "exportBtn") el.disabled = true; });
+        } catch (error) {
+          console.error(error);
+          showToast("本地数据初始化失败，请换用现代浏览器重试");
+        }
+      }
+
+      window.addEventListener("unhandledrejection", (event) => { event.preventDefault(); showToast(event.reason?.message || "操作未保存，请重试。"); });
+      init();
+    </script>
+  </body>
+</html>

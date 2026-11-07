@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <title>抢救车管理助手 · 低保真交互原型</title>
+  <style>
+:root{--paper:#fff;--canvas:#edf0f2;--ink:#263239;--muted:#647179;--line:#ccd3d7;--soft:#f4f6f7;--accent:#275d77;--warning:#805111;--danger:#983b3b;--radius:7px;font-family:"PingFang SC","Microsoft YaHei UI","Microsoft YaHei",sans-serif;color:var(--ink);font-size:14px;line-height:1.55;background:var(--canvas)}
+*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #548aa5;outline-offset:3px}button{border:1px solid var(--line);background:var(--paper);border-radius:var(--radius);min-height:44px;padding:9px 13px}button:hover:not(:disabled){background:#edf3f6}h1,h2,h3,p{margin:0}h2{font-size:17px}h3{font-size:15px}p+p{margin-top:8px}.review-bar{min-height:46px;padding:6px 26px;background:#fff;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;justify-content:space-between;font-size:12px}.review-bar button{min-height:32px;font-size:12px;padding:3px 12px}.workspace{max-width:1040px;margin:0 auto;padding:28px 30px 48px;display:grid;grid-template-columns:310px minmax(0,460px);gap:76px;align-items:start}.review-panel{padding:20px 0;position:sticky;top:20px}.review-panel h1{font-size:26px;font-weight:650;letter-spacing:-.5px}.review-panel>p{color:var(--muted);margin-top:9px}.review-panel h2{font-size:13px;color:var(--muted);font-weight:600;margin:28px 0 9px}.review-note{border-left:3px solid #9aa9b1;padding:2px 0 2px 14px;margin-top:26px;color:#526069;font-size:13px}.page-map{display:flex;flex-direction:column;gap:5px}.page-map button{background:transparent;text-align:left;border-color:transparent}.page-map button.active{background:#fff;border-color:var(--line);font-weight:650}.task-list{padding-left:20px;margin:0;color:#485961;display:grid;gap:8px;font-size:13px}.review-panel details{margin-top:25px;font-size:12px;color:var(--muted)}.review-panel details p{padding-top:8px}.reset-button{margin-top:25px;background:transparent;font-size:12px}.aside-fine{font-size:11px;max-width:260px}.device-caption{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;padding:0 3px 9px}.app-frame{width:100%;background:#fff;border:1px solid #b9c3c9;min-height:780px;border-radius:12px;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 30px #26323908}.simulation-notice{padding:8px 12px;background:#f0f2f3;color:#56646c;text-align:center;font-size:11px;border-bottom:1px dashed #c4cdd2}.app-header{padding:17px 18px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--line)}.app-header h1{font-size:21px;font-weight:650;letter-spacing:-.4px}.header-subtitle{font-size:12px;color:var(--muted);margin-top:2px}.header-title{display:flex;align-items:center;gap:8px;min-width:0}.back{padding:0;width:32px;min-height:40px;border:none;font-size:25px;background:transparent}.header-action{font-size:12px;padding:7px 10px;white-space:nowrap}#screen{padding:19px 17px 28px;flex:1;outline:none;min-width:0}.bottom-nav{display:flex;position:sticky;bottom:0;z-index:3;border-top:1px solid var(--line);background:#fff;padding:6px 10px calc(6px + env(safe-area-inset-bottom));margin-top:auto}.bottom-nav button{flex:1;border:none;padding:5px 4px;font-size:12px;color:var(--muted);display:grid;place-items:center;gap:1px;background:transparent}.bottom-nav button span{font-size:23px;line-height:1.15}.bottom-nav button.active{color:var(--accent);font-weight:700}.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;gap:8px}.section{margin-bottom:24px}.section:last-child{margin-bottom:0}.subtle{font-size:12px;color:var(--muted)}.small{font-size:12px}.fine{font-size:11px;color:var(--muted)}.link-button{border:0;padding:5px 0;min-height:32px;background:transparent;color:var(--accent);font-size:12px}.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.primary:hover:not(:disabled){background:#214d63}.secondary{background:#f3f5f6}.full{width:100%}.actions{display:flex;gap:9px;margin-top:17px;flex-wrap:wrap}.actions>*{flex:1}.actions.no-grow>*{flex:0 1 auto}.alert-list{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}.alert-row{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;width:100%;border:none;border-bottom:1px solid var(--line);border-radius:0;text-align:left;min-height:51px}.alert-row:last-child{border-bottom:0}.alert-row .count{font-size:18px;font-weight:650}.alert-row .alert-text{display:flex;gap:10px;align-items:center}.marker{width:7px;height:7px;background:#7c858b;display:inline-block;border-radius:1px}.marker.warning{background:var(--warning)}.marker.danger{background:var(--danger)}.status-label{font-size:11px;border:1px solid #bdc8ce;border-radius:4px;padding:2px 6px;white-space:nowrap;background:#f5f7f8;color:#52616a;display:inline-flex;align-items:center;gap:4px}.status-label.warning{color:#78501a;border-color:#c9b89c;background:#faf7f1}.status-label.danger{color:#913d3d;border-color:#c9a7a7;background:#fbf5f5}.status-label.good{color:#3f6261;border-color:#a9bdbc;background:#f4f8f7}.tag-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.cart-row{border:1px solid var(--line);border-radius:var(--radius);padding:15px;margin-bottom:10px}.cart-row-head{display:flex;justify-content:space-between;gap:12px}.cart-name{border:0;min-height:32px;padding:0;text-align:left;font-size:17px;font-weight:650;color:var(--ink);background:transparent}.cart-meta{font-size:12px;color:var(--muted);margin-top:5px}.cart-row-footer{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:13px;padding-top:10px;border-top:1px solid #e3e7e9}.history-row{padding:11px 0;border-bottom:1px solid #e4e8ea;display:flex;justify-content:space-between;gap:9px}.history-row:last-child{border-bottom:0}.history-title{font-weight:600;font-size:13px}.empty{background:var(--soft);padding:20px 15px;border:1px dashed var(--line);border-radius:var(--radius);text-align:center}.empty p{font-size:12px;color:var(--muted);margin:7px 0 14px}.cart-select{width:100%;background:var(--soft);border:1px solid var(--line);padding:10px 12px;border-radius:var(--radius);min-height:44px}.search-row{margin-top:12px;display:flex;gap:8px}.search-row input{width:100%;min-width:0;border:1px solid var(--line);border-radius:var(--radius);padding:10px 11px;min-height:44px;background:#fff}.chips{display:flex;gap:6px;overflow:auto;padding:11px 0 2px;scrollbar-width:thin}.chips button{white-space:nowrap;min-height:36px;font-size:12px;padding:6px 11px}.chips button.active{border-color:#4e6d7c;background:#eef3f5;font-weight:650}.filter-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:11px 0 14px}.filter-row select{border:1px solid var(--line);padding:7px;border-radius:4px;font-size:12px;max-width:170px}.item-row{border-top:1px solid var(--line);padding:15px 0}.item-row:first-child{border-top:0}.item-open{display:block;border:0;width:100%;padding:0;min-height:28px;text-align:left;font-size:16px;font-weight:650;background:transparent}.item-row-main{display:flex;justify-content:space-between;gap:10px}.item-quantity{font-size:13px;text-align:right;white-space:nowrap}.item-location{font-size:12px;color:var(--muted);margin-top:8px}.sticky-action{padding-top:15px;margin-top:10px;border-top:1px solid var(--line)}.detail-heading{margin-bottom:17px}.detail-heading h2{font-size:20px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:var(--radius);margin-bottom:18px}.detail-cell{padding:13px 14px}.detail-cell+ .detail-cell{border-left:1px solid var(--line)}.detail-cell span{display:block;color:var(--muted);font-size:12px}.detail-cell strong{font-size:23px;font-weight:650;display:block;margin-top:4px}.key-values{display:grid;grid-template-columns:92px 1fr;gap:9px 12px;font-size:13px}.key-values dt{color:var(--muted)}.key-values dd{margin:0;overflow-wrap:anywhere}.batch{border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:9px}.batch-top{display:flex;align-items:center;justify-content:space-between;gap:7px}.batch-detail{font-size:12px;color:#5c6971;margin-top:7px}.notice{border-left:3px solid #9daeb7;padding:9px 12px;background:var(--soft);font-size:12px;color:#53626b;margin:12px 0}.notice.warn{border-left-color:#b49b73;color:#775a2d;background:#faf8f4}.field{margin-bottom:14px}.field>label,.field>legend{font-size:13px;font-weight:600;display:block;margin-bottom:6px}.field label.inline{font-weight:400;display:flex;align-items:center;gap:8px}.field input:not([type=checkbox]):not([type=radio]),.field select,.field textarea{width:100%;border:1px solid #bfcbd1;border-radius:5px;min-height:44px;padding:10px 11px;background:#fff}.field textarea{min-height:74px;resize:vertical}.field .subtle{margin-top:5px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.form-grid .wide{grid-column:1/-1}.optional-fields{margin:9px 0 17px;border-top:1px dashed var(--line);padding-top:12px}.optional-fields summary{font-size:13px;cursor:pointer}.optional-fields[open] summary{margin-bottom:15px}.required{font-size:11px;color:#6c777e;font-weight:400;margin-left:5px}.error{color:#913d3d;background:#fbf1f1;border:1px solid #d7b6b6;padding:9px 11px;border-radius:5px;font-size:12px;margin:10px 0}.error:empty{display:none}.progress-line{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-bottom:8px}.progress-track{height:5px;background:#e9edef;margin-bottom:18px}.progress-track>div{height:100%;background:#6b8796}.check-item-header{border:1px solid var(--line);padding:14px;margin:13px 0 17px;border-radius:var(--radius)}.choice-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.choice-row label{border:1px solid var(--line);padding:12px;border-radius:5px;display:flex;gap:8px;align-items:center;cursor:pointer;min-height:48px}.choice-row label:has(input:checked){border-color:#4e7284;background:#f0f5f7}.check-options{display:grid;grid-template-columns:1fr 1fr;gap:9px 7px;margin:12px 0}.check-options label{display:flex;align-items:center;gap:7px;font-size:12px;min-height:37px}.checklist{display:grid;gap:9px;margin-bottom:16px}.checklist label{border:1px solid var(--line);border-radius:5px;padding:10px;display:flex;gap:9px;align-items:center;font-size:13px;min-height:44px}.settings-group{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}.setting-row{border:none;border-bottom:1px solid var(--line);padding:14px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;width:100%;border-radius:0}.setting-row:last-child{border-bottom:0}.setting-row .subtle{margin-top:2px}.setting-arrow{color:#74858e;font-size:19px}.template-list{display:grid;gap:8px}.template-list button{display:flex;text-align:left;justify-content:space-between;align-items:center}.device-status{padding:12px;border:1px dashed var(--line);font-size:12px;margin-top:18px;color:var(--muted)}.summary-number{font-size:27px;font-weight:650;line-height:1.3}.summary-box{padding:18px;border:1px solid var(--line);border-radius:var(--radius);margin:14px 0}.summary-box p{font-size:12px;margin-top:5px;color:var(--muted)}dialog{border:1px solid #b9c6cd;border-radius:10px;width:min(440px,calc(100vw - 24px));max-height:88dvh;padding:0;color:var(--ink);background:#fff;box-shadow:0 18px 75px #182d3b30}dialog::backdrop{background:#24384160}.sheet-heading{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;background:#fff}.sheet-heading h2{font-size:18px}.close-button{min-height:32px;width:32px;padding:0;font-size:23px;border:0;background:transparent}#sheet-content{padding:17px}.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#31464f;color:#fff;padding:11px 17px;max-width:calc(100% - 30px);font-size:13px;border-radius:6px;opacity:0;pointer-events:none;z-index:50;transition:opacity .12s}.toast.show{opacity:1}.flow-diagram{display:grid;gap:10px}.flow-diagram button{width:100%;text-align:left;border-style:dashed}.flow-branch{padding-left:18px;border-left:1px solid var(--line);margin-left:10px;display:grid;gap:8px}.flow-arrow{font-size:12px;color:var(--muted);text-align:center}.result-row{border:1px solid var(--line);padding:12px;border-radius:5px;margin:10px 0}.result-row button{min-height:32px}.export-sheets{margin:13px 0;display:grid;gap:7px}.export-sheets span{padding:9px 11px;border:1px dashed var(--line);font-size:12px}.split-buttons{display:flex;gap:7px;flex-wrap:wrap}.split-buttons button{font-size:12px;min-height:37px}.muted{color:var(--muted)}.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+@media(max-width:850px){.workspace{gap:30px;grid-template-columns:240px minmax(0,440px);padding:22px 20px}.review-panel h1{font-size:22px}}
+@media(max-width:660px){:root{background:#fff}.workspace{display:block;padding:0;margin:0;max-width:100%}.review-panel,.device-caption{display:none}.review-bar{padding:5px 12px;font-size:11px;min-height:41px}.app-frame{border:0;border-radius:0;box-shadow:none;min-height:calc(100dvh - 41px)}.app-header{padding:15px 16px 12px}#screen{padding:17px 15px 24px}.bottom-nav{position:sticky}.toast{bottom:82px}.device-area{max-width:100%}}
+@media(max-width:350px){#screen{padding:15px 11px}.app-header h1{font-size:19px}.form-grid{grid-template-columns:1fr}.form-grid .wide{grid-column:auto}.check-options{grid-template-columns:1fr}.item-row-main{gap:5px}.status-label{font-size:10px}.app-header{padding-left:10px;padding-right:10px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+.app-frame{height:min(850px,calc(100dvh - 120px));min-height:600px}.app-header,.simulation-notice,.bottom-nav{flex-shrink:0}.bottom-nav{position:relative;bottom:auto}#screen{min-height:0;overflow-y:auto;overscroll-behavior:contain}.cart-row-footer>div{display:flex;gap:14px;align-items:center}[hidden]{display:none!important}
+@media(max-width:660px){.review-bar{height:41px;min-height:41px;padding:4px 12px}.app-frame{height:calc(100dvh - 41px);min-height:0}#screen{padding-bottom:24px}}
+
+</style>
+</head>
+<body>
+  <div class="review-bar"><span><b>低保真交互原型</b> · 仅模拟数据</span><button type="button" data-action="flow">页面流程</button></div>
+  <div class="workspace">
+    <aside class="review-panel" aria-label="原型评审说明">
+      <h1>抢救车管理助手</h1>
+      <p>护士个人使用的轻量化<br>抢救车管理工作台</p>
+      <div class="review-note">这是一份可以点击的流程草图。请把注意力放在任务和操作顺序，而非视觉细节。</div>
+      <h2>五个核心页面</h2>
+      <div class="page-map">
+        <button data-action="nav" data-page="home">个人工作台</button>
+        <button data-action="nav" data-page="list">抢救车物品清单</button>
+        <button data-action="nav" data-page="detail">物品详情</button>
+        <button data-action="nav" data-page="check">逐项检查</button>
+        <button data-action="nav" data-page="settings">配置中心</button>
+      </div>
+      <h2>本轮评审任务</h2>
+      <ol class="task-list"><li>创建一台车，添加一种药品。</li><li>找到近效期物品，查看对应批次。</li><li>完成一项检查，查看检查结果。</li></ol>
+      <details><summary>评审者说明</summary><p>先观察，不提示路径。记录是否独立完成、耗时、误点和提问。本原型不证明数据可靠性或医院适用性。</p><p>效期演示基准为 2026-11-07。所有名称、规格、数量和检查项目均为模拟。</p></details>
+      <button class="reset-button" data-action="reset">重置全部模拟数据</button>
+      <p class="aside-fine">无数据库、无账号、无上传。刷新页面即重置。旧项目未改动。</p>
+    </aside>
+    <div class="device-area">
+      <div class="device-caption"><span id="page-caption">个人工作台</span><span>手机竖屏优先</span></div>
+      <div class="app-frame">
+        <div class="simulation-notice">模拟操作，刷新即重置 · 请勿录入真实工作数据</div>
+        <header id="app-header" class="app-header"></header>
+        <main id="screen" tabindex="-1"></main>
+        <nav class="bottom-nav" aria-label="主要导航"><button data-action="nav" data-page="home"><span aria-hidden="true">⌂</span>工作台</button><button data-action="nav" data-page="list"><span aria-hidden="true">☷</span>物品清单</button><button data-action="nav" data-page="settings"><span aria-hidden="true">⚙</span>配置</button></nav>
+      </div>
+    </div>
+  </div>
+  <dialog id="sheet" aria-labelledby="sheet-title"><div class="sheet-heading"><h2 id="sheet-title"></h2><button type="button" class="close-button" data-action="close-sheet" aria-label="关闭弹窗">×</button></div><div id="sheet-content"></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+/* 独立交互原型：所有状态只在内存中，不访问数据库、浏览器存储或网络。 */
+(() => {
+  'use strict';
+  const DEMO_DAY = '2026-11-07';
+  const TYPES = { medicine: '药品', consumable: '医用耗材', equipment: '器械设备', custom: '其他物品' };
+  const DEPARTMENTS = ['普通病区', '急诊', 'ICU', '儿科', '手术室 / 麻醉恢复室', '妇产科', '自定义'];
+  const FINDINGS = { short: '数量不足', expired: '已过期', packaging: '包装异常', missing: '物品缺失', equipment: '设备异常', other: '其他异常' };
+  const $ = (s, root = document) => root.querySelector(s);
+  const e = (v = '') => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let serial = 0;
+  const uid = p => `${p}-${++serial}`;
+  function seed() {
+    return {
+      page: 'home', cartId: 'cart-example', itemId: 'item-a', query: '', type: 'all', filter: 'all', warningDays: 30,
+      carts: [{ id: 'cart-example', name: '示例抢救车', department: '普通病区', location: '示例位置', demo: true }],
+      items: [
+        { id: 'item-a', cartId: 'cart-example', type: 'medicine', name: '示例药品 A', specification: '演示规格', unit: '支', required: 10, location: '示例抽屉 1', batches: [{ id: 'batch-a1', number: '模拟批次 A1', quantity: 4, expiry: '2026-11-20', precision: 'day' }, { id: 'batch-a2', number: '模拟批次 A2', quantity: 4, expiry: '2027-02-15', precision: 'day' }], remark: '所有数值仅为交互演示，不是临床配置。' },
+        { id: 'item-b', cartId: 'cart-example', type: 'consumable', name: '示例耗材 B', specification: '演示规格', unit: '件', required: 4, location: '示例抽屉 2', batches: [{ id: 'batch-b1', number: '模拟批次 B1', quantity: 4, expiry: '2026-11-05', precision: 'day' }] },
+        { id: 'item-c', cartId: 'cart-example', type: 'equipment', name: '示例设备 C', specification: '演示型号', unit: '台', required: 1, actual: 1, location: '示例车侧', checklist: ['外观检查（模拟项目）', '功能检查（模拟项目）'] },
+        { id: 'item-d', cartId: 'cart-example', type: 'custom', name: '示例物品 D', unit: '件', required: null, actual: null, location: '未设置' },
+        { id: 'item-e', cartId: 'cart-example', type: 'medicine', name: '示例药品 E', unit: '瓶', required: 2, location: '示例抽屉 1', batches: [{ id: 'batch-e1', number: '模拟批次 E1', quantity: 2, expiry: '2027-06', precision: 'month' }] }
+      ],
+      records: [{ id: 'legacy-example', itemId: 'item-a', cartId: 'cart-example', name: '示例药品 A', result: null, checker: '模拟登记人', checkedAt: '2026-11-06T08:30:00+08:00', timeSource: 'unknown', legacy: true, remark: '模拟旧版记录，未保存检查结果和操作方式。' }],
+      changes: [], fields: [], session: null, lastMockBackup: null
+    };
+  }
+  let state = seed();
+  let toastTimer;
+  const cart = () => state.carts.find(x => x.id === state.cartId) || state.carts[0];
+  const item = id => state.items.find(x => x.id === (id || state.itemId));
+  const cartItems = () => state.items.filter(x => x.cartId === state.cartId);
+  const actual = it => Array.isArray(it.batches) ? (it.batches.length ? it.batches.reduce((a, b) => a + b.quantity, 0) : (it.quantityEntered ? 0 : null)) : it.actual;
+  const countText = n => n === null || n === undefined ? '未录入' : String(n);
+  function dayNumber(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) return null;
+    const [y, m, d] = value.split('-').map(Number);
+    const date = new Date(Date.UTC(y, m - 1, d));
+    return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d ? date.getTime() / 86400000 : null;
+  }
+  function expiry(b) {
+    if (!b.expiry) return { key: 'unset', label: '效期未设置', tone: '' };
+    if (b.precision === 'month') return { key: 'pending', label: '日期规则待确认', tone: '' };
+    const target = dayNumber(b.expiry);
+    if (target === null) return { key: 'invalid', label: '日期待修正', tone: 'danger' };
+    const days = target - dayNumber(DEMO_DAY);
+    if (days < 0) return { key: 'expired', label: `已过期 ${-days} 天`, tone: 'danger', days };
+    if (days <= state.warningDays) return { key: 'warning', label: `近效期 · 剩余 ${days} 天`, tone: 'warning', days };
+    return { key: 'normal', label: `剩余 ${days} 天`, tone: 'good', days };
+  }
+  const low = it => it.required !== null && it.required !== undefined && actual(it) !== null && actual(it) < it.required;
+  const hasExpiry = (it, key) => (it.batches || []).some(b => b.quantity > 0 && expiry(b).key === key);
+  const flag = (text, tone = '') => `<span class="status-label ${tone}">${e(text)}</span>`;
+  function badges(it) {
+    const tags = [];
+    if (hasExpiry(it, 'expired')) tags.push(flag('有过期批次', 'danger'));
+    if (hasExpiry(it, 'warning')) tags.push(flag('有近效期批次', 'warning'));
+    if (low(it)) tags.push(flag(`数量不足 ${it.required - actual(it)}`, 'warning'));
+    if (hasExpiry(it, 'pending')) tags.push(flag('日期规则待确认'));
+    if (it.required === null) tags.push(flag('应有数量待确认'));
+    if (actual(it) === null) tags.push(flag('实际数量未录入'));
+    if (it.pendingRecheck) tags.push(flag('数量更新后待复核', 'warning'));
+    if (!tags.length) tags.push(flag(it.type === 'equipment' ? '查看设备检查项目' : '当前账面无提醒'));
+    return tags.join('');
+  }
+  function visibleItems() {
+    return cartItems().filter(it => {
+      const q = state.query.toLowerCase();
+      const text = [it.name, it.specification, it.location, ...(it.batches || []).map(b => b.number)].join(' ').toLowerCase();
+      return (!q || text.includes(q)) && (state.type === 'all' || it.type === state.type) && (state.filter === 'all' || (state.filter === 'low' ? low(it) : state.filter === 'recheck' ? it.pendingRecheck : hasExpiry(it, state.filter)));
+    });
+  }
+  function notify(text) {
+    $('#toast').textContent = text; $('#toast').classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('show'), 3400);
+  }
+  function showSheet(title, html) {
+    $('#sheet-title').textContent = title; $('#sheet-content').innerHTML = html;
+    if (!$('#sheet').open) $('#sheet').showModal();
+  }
+  function closeSheet() { if ($('#sheet').open) $('#sheet').close(); }
+  function go(page, options = {}) {
+    closeSheet(); Object.assign(state, options); state.page = page;
+    if (page === 'detail' && (!item() || item().cartId !== state.cartId)) { const first = cartItems()[0]; if (!first) return go('list'); state.itemId = first.id; }
+    if (page === 'check' && (!state.session || state.session.cartId !== state.cartId)) return startCheck(cartItems().map(x => x.id));
+    render(); $('#screen').scrollTop = 0; window.scrollTo({ top: 0, behavior: 'instant' }); $('#screen').focus({ preventScroll: true });
+  }
+  function header(title, subtitle, action = '', back = false) {
+    $('#app-header').innerHTML = `<div class="header-title">${back ? '<button class="back" data-action="back" aria-label="返回物品清单">‹</button>' : ''}<div><h1>${e(title)}</h1><p class="header-subtitle">${e(subtitle)}</p></div></div>${action}`;
+    $('#page-caption').textContent = ({ home: '个人工作台', list: '抢救车物品清单', detail: '物品详情', check: '逐项检查', settings: '配置中心' })[state.page];
+  }
+  const button = (text, action, cls = '', attrs = '') => `<button type="button" class="${cls}" data-action="${action}" ${attrs}>${text}</button>`;
+  function recordLabel(r) { return r.legacy ? '旧版 · 结果未记录' : r.result === 'normal' ? '人工确认正常' : '已记录异常'; }
+  const timeText = value => value ? new Date(value).toLocaleString('zh-CN', { hour12: false }) : '未记录';
+  function historyRows(records) {
+    if (!records.length) return '<p class="subtle">暂无记录。单项确认后会出现在这里。</p>';
+    return records.slice(0, 4).map(r => `<div class="history-row"><div><p class="history-title">${e(r.name)}</p><p class="subtle">${e(recordLabel(r))}</p><p class="fine">${e(timeText(r.checkedAt))}</p></div>${button('查看', 'record', 'link-button', `data-id="${e(r.id)}"`)}</div>`).join('');
+  }
+  function homeView() {
+    header('我的工作台', '先处理异常，再进入清单', button('新建抢救车', 'create-cart', 'header-action'));
+    const alerts = [ ['expired', '过期物品', 'danger'], ['warning', '近效期物品', 'warning'], ['low', '数量不足', 'warning'], ['pending', '日期规则待确认', ''] ];
+    const alertRows = alerts.map(([key, label, tone]) => {
+      const items = state.items.filter(it => key === 'low' ? low(it) : hasExpiry(it, key));
+      return `<button class="alert-row" data-action="alert" data-filter="${key}"><span class="alert-text"><i class="marker ${tone}"></i>${label}</span><span class="count">${items.length} <span class="small">项 ›</span></span></button>`;
+    }).join('');
+    return `<section class="section"><div class="section-title"><h2>需要关注</h2><span class="fine">模拟日期 ${DEMO_DAY}</span></div><div class="alert-list">${alertRows}</div><p class="fine" style="margin-top:7px">同一物品可同时有多种提醒；这是账面提示，不代表实物结论。</p></section>
+    <section class="section"><div class="section-title"><h2>我的抢救车</h2><span class="subtle">${state.carts.length} 台</span></div>${state.carts.map(c => {
+      const its = state.items.filter(x => x.cartId === c.id);
+      const anomalies = its.filter(x => low(x) || hasExpiry(x, 'expired') || hasExpiry(x, 'warning')).length;
+      return `<div class="cart-row"><div class="cart-row-head"><button class="cart-name" data-action="open-cart" data-id="${e(c.id)}">${e(c.name)}</button>${flag('模拟')}</div><p class="cart-meta">${e(c.department || '科室未设置')} · ${e(c.location || '位置未设置')}</p><div class="cart-row-footer"><span class="subtle">${its.length} 项物品${anomalies ? ` · ${anomalies} 项有提醒` : ''}</span><div>${button('查看清单', 'open-cart', 'link-button', `data-id="${e(c.id)}"`)} ${button('复制配置', 'copy-cart', 'link-button', `data-id="${e(c.id)}"`)}</div></div></div>`;
+    }).join('')}</section><section class="section"><div class="section-title"><h2>待处理事项</h2></div><p class="subtle">${state.items.filter(x => x.pendingRecheck).length ? `有 ${state.items.filter(x => x.pendingRecheck).length} 项数量变更待复核。进入物品详情后可检查本项。` : '暂无补充后待复核事项。未设置每班检查规则，不推断逾期。'}</p></section><section class="section"><div class="section-title"><h2>最近检查记录</h2></div>${historyRows(state.records)}</section>`;
+  }
+  function cartSelector() {
+    return `<label for="cart-select" class="visually-hidden">选择抢救车</label><select id="cart-select" class="cart-select">${state.carts.map(c => `<option value="${e(c.id)}" ${c.id === state.cartId ? 'selected' : ''}>${e(c.name)}</option>`).join('')}</select>`;
+  }
+  function itemRows(list) {
+    if (!list.length) return `<div class="empty"><h3>${cartItems().length ? '没有符合条件的物品' : '这台车还没有物品'}</h3><p>${cartItems().length ? '试试更换筛选条件或清空搜索。' : '先添加一种物品。应有数量需要自行确认，不从模板猜测。'}</p>${button(cartItems().length ? '清空筛选' : '添加第一种物品', cartItems().length ? 'clear-filters' : 'add-item')}</div>`;
+    return list.map(it => `<article class="item-row"><div class="item-row-main"><div><button class="item-open" data-action="item" data-id="${e(it.id)}">${e(it.name)}</button><p class="subtle">${e(TYPES[it.type])} · ${e(it.specification || '规格未填')}</p></div><div class="item-quantity"><strong>${e(countText(actual(it)))}</strong><span class="subtle"> / ${it.required === null ? '应有待确认' : e(it.required)}</span><p class="fine">${e(it.unit || '单位未设置')}</p></div></div><div class="tag-row">${badges(it)}</div><p class="item-location">${e(it.location || '位置未设置')} · ${it.batches ? `${it.batches.length} 个批次` : '数量汇总'}</p></article>`).join('');
+  }
+  function listView() {
+    header('物品清单', '选择一项查看批次或开始检查', button('添加物品', 'add-item', 'header-action'));
+    const list = visibleItems();
+    return `${cartSelector()}<div class="search-row"><label class="visually-hidden" for="search">搜索物品</label><input id="search" type="search" value="${e(state.query)}" placeholder="搜索名称、批号或位置" autocomplete="off"></div><div class="chips" aria-label="物品类型">${[['all', '全部'], ...Object.entries(TYPES)].map(([value, text]) => button(e(text), 'type', value === state.type ? 'active' : '', `data-value="${value}"`)).join('')}</div><div class="filter-row"><span class="subtle" id="list-count">${list.length} 项物品</span><label><span class="visually-hidden">异常筛选</span><select id="filter">${[['all', '全部状态'], ['warning', '近效期'], ['expired', '已过期'], ['low', '数量不足'], ['pending', '日期规则待确认'], ['recheck', '更新后待复核']].map(([v, t]) => `<option value="${v}" ${state.filter === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label></div><div id="item-rows">${itemRows(list)}</div><div class="sticky-action">${button(`逐项检查当前清单（${list.length} 项）`, 'check-list', 'primary full', list.length ? '' : 'disabled')}<p class="fine" style="margin-top:7px">只选择待检查范围，不会把任何项目自动标为正常。</p></div>`;
+  }
+  function detailView() {
+    const it = item();
+    header('物品详情', cart().name, button('编辑', 'edit-item', 'header-action'), true);
+    const batches = it.batches ? it.batches.map(b => { const ex = expiry(b); return `<div class="batch"><div class="batch-top"><strong class="small">${e(b.number || '批号未填写')}</strong>${flag(ex.label, ex.tone)}</div><p class="batch-detail">数量 ${e(b.quantity)} ${e(it.unit || '')} · 有效期 ${e(b.expiry || '未设置')}${b.precision === 'month' ? '（仅年月）' : ''}</p>${b.precision === 'month' ? '<p class="fine">未补为月底，不计算剩余天数。</p>' : ''}</div>`; }).join('') : '<p class="subtle">本项不跟踪批次；设备维护周期不按药品效期处理。</p>';
+    const changes = state.changes.filter(x => x.itemId === it.id);
+    return `<section class="detail-heading"><h2>${e(it.name)}</h2><p class="subtle">${e(TYPES[it.type])} · ${e(it.specification || '规格未填')} · 模拟数据</p><div class="tag-row">${badges(it)}</div></section><div class="detail-grid"><div class="detail-cell"><span>应有数量</span><strong>${it.required === null ? '待确认' : e(it.required)}</strong></div><div class="detail-cell"><span>实际数量${it.batches ? '（批次汇总）' : ''}</span><strong>${e(countText(actual(it)))}</strong></div></div><dl class="key-values"><dt>存放位置</dt><dd>${e(it.location || '未设置')}</dd><dt>计数单位</dt><dd>${e(it.unit || '未设置')} · 仅整数计数</dd>${it.remark ? `<dt>备注</dt><dd>${e(it.remark)}</dd>` : ''}</dl><div class="actions">${button('检查本项', 'check-item', 'primary')}${button('使用 / 补充', 'stock')}</div>${it.pendingRecheck ? '<div class="notice warn">数量已经更新，仍需人工复核；尚未自动生成检查记录。</div>' : ''}<section class="section" style="margin-top:24px"><div class="section-title"><h2>批次与效期</h2>${it.batches ? button('添加批次', 'add-batch', 'link-button') : ''}</div>${batches || '<p class="subtle">还未录入批次，实际数量未知。</p>'}</section>${it.type === 'equipment' ? `<section class="section"><div class="section-title"><h2>设备必检项目</h2>${button('修改项目', 'equipment-fields', 'link-button')}</div>${(it.checklist || []).map(x => `<p class="subtle">□ ${e(x)}</p>`).join('') || '<p class="subtle">尚未配置必检项目，不能确认设备整体正常。</p>'}<p class="fine" style="margin-top:7px">这里的项目只是演示，不是医院设备检查标准。</p></section>` : ''}<section class="section"><div class="section-title"><h2>检查记录</h2></div>${historyRows(state.records.filter(x => x.itemId === it.id))}</section><section class="section"><div class="section-title"><h2>数量变化</h2></div>${changes.length ? changes.map(c => `<div class="history-row"><div><p class="history-title">${e(c.label)} · ${e(countText(c.before))} → ${e(countText(c.after))}</p><p class="subtle">${e(c.reason || '未填备注')}</p><p class="fine">${e(timeText(c.at))} · 模拟操作</p></div></div>`).join('') : '<p class="subtle">尚无变化。使用或补充后保留前后数量。</p>'}</section>`;
+  }
+  function startCheck(ids) {
+    if (!ids.length) return notify('这台车还没有可检查的物品，请先添加。');
+    state.session = { cartId: state.cartId, ids: [...ids], index: 0, checked: {}, finished: false };
+    go('check');
+  }
+  function checkView() {
+    const s = state.session;
+    header('逐项检查', cart().name, button('本次记录', 'session-records', 'header-action'), true);
+    const done = Object.keys(s.checked).length;
+    if (s.finished) return `<div class="summary-box"><h2>${done === s.ids.length ? '本次范围已逐项登记' : '本次仍有未检查项目'}</h2><p class="summary-number">${done} / ${s.ids.length}</p><p>只有明确确认的项目才留下记录。该结果仅为模拟交互，不证明实物检查。</p></div>${done < s.ids.length ? `<div class="notice warn">还有 ${s.ids.length - done} 项未确认，没有自动标记为正常。</div>${button('继续未检查项目', 'continue-check', 'primary full')}` : ''}<div class="actions">${button('查看本次检查结果', 'session-records')}${button('返回清单', 'nav', '', 'data-page="list"')}</div>`;
+    const it = item(s.ids[s.index]);
+    const saved = s.checked[it.id];
+    return `<div class="progress-line"><span>当前第 ${s.index + 1} / ${s.ids.length} 项</span><span>已明确确认 ${done} 项</span></div><div class="progress-track"><div style="width:${100 * done / s.ids.length}%"></div></div><div class="check-item-header"><h2>${e(it.name)}</h2><p class="subtle">${e(it.location || '位置未设置')} · 实际 ${e(countText(actual(it)))} / 应有 ${it.required === null ? '待确认' : e(it.required)}</p><div class="tag-row">${badges(it)}</div></div>${saved ? `<div class="notice">本项本次已登记。不会因再次切换页面而重复生成。</div>${button('查看记录', 'record', 'full', `data-id="${e(saved)}"`)}<div class="actions">${button('下一项 / 查看结果', 'next-check', 'primary')}</div>` : `<form data-form="check"><div class="field"><label for="checker">检查人</label><input id="checker" name="checker" required value="模拟检查人" autocomplete="off"><p class="subtle">仅演示自报姓名，不代表身份认证。</p></div><fieldset class="field" style="border:0;padding:0"><legend>本项检查结果 <span class="required">请明确选择</span></legend><div class="choice-row"><label><input type="radio" name="result" value="normal">正常</label><label><input type="radio" name="result" value="abnormal">异常</label></div></fieldset><div id="findings" hidden><p class="subtle">选择所有发现的异常</p><div class="check-options">${Object.entries(FINDINGS).map(([v, t]) => `<label><input type="checkbox" name="finding" value="${v}">${t}</label>`).join('')}</div></div>${it.type === 'equipment' ? `<div class="field"><label>设备必检项目</label><div class="checklist">${(it.checklist || []).map((x, i) => `<label><input type="checkbox" name="equipment" value="${i}">${e(x)}：已核对且正常</label>`).join('')}</div><p class="subtle">所有必检项均确认正常，才能记录设备整体正常。留空不能通过。</p></div>` : ''}<div class="field"><label for="check-remark">备注 <span class="required">异常或账面差异时填写</span></label><textarea id="check-remark" name="remark" placeholder="描述本项需要处理的情况（模拟）"></textarea></div><p class="fine">时间由设备在确认时生成，不可手改。一次只记录当前这一项。</p><div class="error" role="alert" id="check-error"></div><button class="primary full" type="submit">确认并记录本项（模拟）</button></form><div class="actions">${button('稍后检查本项', 'skip-check')}</div>`}`;
+  }
+  function settingsView() {
+    header('配置中心', '常用设置集中在这里');
+    const row = (title, sub, action) => `<button class="setting-row" data-action="${action}"><div><h3>${title}</h3><p class="subtle">${sub}</p></div><span class="setting-arrow" aria-hidden="true">›</span></button>`;
+    return `<section class="section"><div class="section-title"><h2>清单与提醒</h2></div><div class="settings-group">${row('科室空白模板', '只提供入口，不提供临床物品清单', 'templates')}${row('基础扩展字段', '文本、数字、日期、备注；可不使用', 'custom-fields')}${row('效期提醒规则', `当前 ${state.warningDays} 天；年月效期单独待确认`, 'rules')}</div></section><section class="section"><div class="section-title"><h2>数据导出与备份</h2></div><div class="settings-group">${row('Excel 导出', '预览四个 Sheet 的导出流程', 'excel')}${row('JSON 备份与恢复', '预览备份、校验失败和恢复确认流程', 'backup')}</div><p class="fine" style="margin-top:9px">本原型不读写文件，也不验证真正的 XLSX / JSON 恢复能力。</p></section><section class="section"><div class="section-title"><h2>原型说明</h2></div><div class="settings-group">${row('页面与操作流程', '查看五个页面之间的跳转', 'flow')}${row('重置模拟数据', '撤销本页的模拟操作，重新开始评审', 'reset')}</div></section><div class="device-status"><p>全部是模拟数据，只留在当前页面内存。</p><p>刷新后重置，不支持实际备份、安装或离线使用。本原型不替代医院正式检查和交接记录。</p></div>`;
+  }
+  function render() {
+    const views = { home: homeView, list: listView, detail: detailView, check: checkView, settings: settingsView };
+    $('#screen').innerHTML = views[state.page]();
+    document.title = `${$('#page-caption').textContent} · 抢救车管理助手原型`;
+    document.querySelectorAll('.bottom-nav button,.page-map button').forEach(b => b.classList.toggle('active', b.dataset.page === state.page || (b.dataset.page === 'list' && ['detail', 'check'].includes(state.page) && b.closest('.bottom-nav'))));
+  }
+  const field = (label, name, options = {}) => `<div class="field ${options.wide ? 'wide' : ''}"><label for="f-${name}">${label}${options.required ? '<span class="required">必填</span>' : ''}</label><input id="f-${name}" name="${name}" type="${options.type || 'text'}" ${options.required ? 'required' : ''} ${options.type === 'number' ? 'min="0" step="1" inputmode="numeric"' : ''} value="${e(options.value ?? '')}" placeholder="${e(options.placeholder || '')}"></div>`;
+  function customField(f, value) {
+    const id = `custom-${f.id}`, label = `${e(f.name)}（扩展字段）`;
+    const control = f.kind === 'remark' ? `<textarea id="${id}" name="${id}">${e(value || '')}</textarea>` : `<input id="${id}" name="${id}" type="${f.kind === 'number' ? 'number' : f.kind === 'date' ? 'date' : 'text'}" ${f.kind === 'number' ? 'step="any" inputmode="decimal"' : ''} value="${e(value ?? '')}">`;
+    return `<div class="field"><label for="${id}">${label}</label>${control}</div>`;
+  }
+  function createCart(department = '') {
+    showSheet('新建抢救车', `<p class="notice">只创建空车。此处输入仅用于原型，刷新后不保留。</p><form data-form="cart">${field('抢救车名称', 'name', { required: true, placeholder: '例如：我的演示车' })}<div class="field"><label for="f-department">科室</label><select id="f-department" name="department"><option value="">暂不设置</option>${DEPARTMENTS.map(d => `<option ${d === department ? 'selected' : ''}>${e(d)}</option>`).join('')}</select></div>${field('存放位置', 'location', { placeholder: '可稍后补充' })}<div class="error" role="alert"></div><button type="submit" class="primary full">创建空车（模拟）</button></form>`);
+  }
+  function itemForm(edit = false) {
+    const it = edit ? item() : null;
+    showSheet(edit ? '编辑物品配置' : '添加物品', `<p class="subtle" style="margin-bottom:15px">先填必要信息，其余可以稍后补充。不得以演示数值作为真实配置。</p><form data-form="item" data-edit="${it ? e(it.id) : ''}"><div class="field"><label for="f-type">物品类型</label><select id="f-type" name="type" ${edit ? 'disabled' : ''}>${Object.entries(TYPES).map(([v, t]) => `<option value="${v}" ${it?.type === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>${field('物品名称', 'name', { required: true, value: it?.name, placeholder: '使用模拟名称，例如：演示药品 F' })}<div class="form-grid">${field('应有数量', 'required', { type: 'number', value: it?.required, placeholder: '未确认可留空' })}${!edit ? field('实际数量', 'actual', { type: 'number', placeholder: '未盘点可留空' }) : '<p class="subtle" style="padding-top:28px">实际数量通过批次或使用 / 补充修改。</p>'}</div><details class="optional-fields"><summary>补充规格、位置等信息（可选）</summary>${field('规格 / 型号', 'specification', { value: it?.specification })}${field('计数单位', 'unit', { value: it?.unit, placeholder: '支、瓶、件等，仅整数计数' })}${field('存放位置', 'location', { value: it?.location })}<div id="new-expiry" ${edit || it?.type === 'equipment' ? 'hidden' : ''}>${expiryForm()}</div><div class="field"><label for="f-remark">备注</label><textarea name="remark" id="f-remark">${e(it?.remark || '')}</textarea></div>${state.fields.map(f => customField(f, it?.customValues?.[f.id])).join('')}</details><div id="equipment-config" class="field" ${it?.type !== 'equipment' ? 'hidden' : ''}><label for="f-checklist">设备必检项目</label><textarea id="f-checklist" name="checklist" placeholder="每行一个模拟项目，由使用者确认">${e((it?.checklist || []).join('\n'))}</textarea><p class="subtle">未配置时不能确认设备整体正常；不提供临床默认项目。</p></div><div class="error" role="alert"></div><button type="submit" class="primary full">${edit ? '保存配置' : '添加到当前车'}（模拟）</button></form>`);
+  }
+  function expiryForm() {
+    return `<div class="field"><label for="f-precision">有效期标注方式</label><select id="f-precision" name="precision"><option value="none">暂未填写</option><option value="day">完整日期（年-月-日）</option><option value="month">只有年月</option></select></div><div class="field" id="expiry-input-wrap" hidden><label for="f-expiry">有效期原值</label><input id="f-expiry" name="expiry" type="text" placeholder="YYYY-MM-DD 或 YYYY-MM"><p id="expiry-tip" class="subtle">年月精度不补月底，不计算倒计时。</p></div>`;
+  }
+  function validateExpiry(fd) {
+    const precision = fd.get('precision') || 'none', value = String(fd.get('expiry') || '').trim();
+    if (precision === 'none') return { expiry: '', precision: '' };
+    if (precision === 'day' && dayNumber(value) === null) throw Error('请输入真实存在的完整日期，例如 2027-06-15。');
+    if (precision === 'month' && !/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) throw Error('只有年月时请填写 YYYY-MM，不要补写日期。');
+    return { expiry: value, precision };
+  }
+  function count(value, nullable = true) {
+    if (value === '' || value === null) { if (nullable) return null; throw Error('请填写数量。'); }
+    if (!/^\d+$/.test(String(value)) || !Number.isSafeInteger(Number(value))) throw Error('数量仅接受有限非负整数，不支持小数或自动取整。');
+    return Number(value);
+  }
+  function saveItem(form, fd) {
+    const existing = form.dataset.edit ? item(form.dataset.edit) : null;
+    const type = existing?.type || fd.get('type');
+    const name = String(fd.get('name') || '').trim(); if (!name) throw Error('请填写物品名称。');
+    const required = count(fd.get('required'));
+    const isBatch = ['medicine', 'consumable'].includes(type);
+    const values = {};
+    state.fields.forEach(f => { const v = String(fd.get(`custom-${f.id}`) || '').trim(); if (f.kind === 'number' && v && !Number.isFinite(Number(v))) throw Error(`“${f.name}”需要有效数字。`); if (f.kind === 'date' && v && dayNumber(v) === null) throw Error(`“${f.name}”需要真实存在的日期。`); values[f.id] = !v ? null : f.kind === 'number' ? Number(v) : v; });
+    const target = existing || { id: uid('item'), cartId: state.cartId, type, pendingRecheck: false };
+    let initialBatch, initialActual;
+    if (!existing) {
+      initialActual = count(fd.get('actual'));
+      const ex = isBatch ? validateExpiry(fd) : {};
+      if (isBatch && ex.expiry && initialActual === null) throw Error('已填写效期，请同时填写该初始批次的实际数量；未盘点可先不填写效期。');
+      initialBatch = initialActual === null ? [] : [{ id: uid('batch'), number: '', quantity: initialActual, ...ex }];
+    }
+    Object.assign(target, { name, required, specification: String(fd.get('specification') || '').trim(), unit: String(fd.get('unit') || '').trim(), location: String(fd.get('location') || '').trim(), remark: String(fd.get('remark') || '').trim(), customValues: values });
+    if (type === 'equipment') target.checklist = String(fd.get('checklist') || '').split('\n').map(x => x.trim()).filter(Boolean);
+    if (!existing) { if (isBatch) { target.batches = initialBatch; target.quantityEntered = initialActual !== null; } else target.actual = initialActual; state.items.push(target); }
+    go('detail', { itemId: target.id }); notify(existing ? '已在原型中修改配置，未保存到数据库。' : '已添加模拟物品，刷新后重置。');
+  }
+  function batchForm() {
+    showSheet('添加批次', `<p class="subtle" style="margin-bottom:13px">${e(item().name)} · 数量会计入物品总数。</p><form data-form="batch">${field('生产批号', 'number', { placeholder: '未知可留空，不生成临床批号' })}${field('本批次数量', 'quantity', { type: 'number', required: true })}${expiryForm()}<div class="error" role="alert"></div><button type="submit" class="primary full">添加模拟批次</button></form>`);
+  }
+  function stockForm() {
+    const it = item();
+    if (it.batches && !it.batches.length) return notify('尚无批次，请先添加批次并录入数量。');
+    showSheet('使用 / 补充记录', `<p class="notice">仅模拟更新账面数量；不会自动生成正常检查记录。</p><form data-form="stock">${it.batches ? `<div class="field"><label for="stock-batch">选择批次</label><select name="batch" id="stock-batch">${it.batches.map(b => `<option value="${e(b.id)}">${e(b.number || '未填批号')} · 当前 ${b.quantity} · ${e(b.expiry || '效期未填')}</option>`).join('')}</select></div>` : ''}<div class="field"><label for="stock-operation">操作</label><select name="operation" id="stock-operation"><option value="use">使用：扣减数量</option><option value="replenish">补充：增加数量</option><option value="adjust">盘点更正：输入当前数量</option></select></div>${field('操作数量', 'quantity', { type: 'number', required: true })}${field('原因 / 备注', 'reason', { placeholder: '描述本次模拟变化' })}<p class="fine">新批号或新效期请返回详情“添加批次”，不要覆盖旧批次。</p><div class="error" role="alert"></div><button type="submit" class="primary full">记录变化（模拟）</button></form>`);
+  }
+  function saveCheck(form, fd) {
+    const s = state.session, it = item(s.ids[s.index]);
+    const checker = String(fd.get('checker') || '').trim(), result = fd.get('result'), findings = fd.getAll('finding'), remark = String(fd.get('remark') || '').trim();
+    if (!checker) throw Error('请填写检查人（只使用模拟姓名）。');
+    if (!result) throw Error('请明确选择当前这一项正常或异常。');
+    if (result === 'abnormal' && !findings.length) throw Error('请选择至少一种异常。');
+    if (result === 'abnormal' && !remark) throw Error('请写下本项异常说明，便于后续处理。');
+    if (result === 'normal' && it.type === 'equipment' && (!(it.checklist || []).length || fd.getAll('equipment').length !== it.checklist.length)) throw Error('所有设备必检项目都明确核对且正常，才能记录整体正常。');
+    if (result === 'normal' && (low(it) || hasExpiry(it, 'expired') || hasExpiry(it, 'pending')) && !remark) throw Error('当前账面有异常或待确认日期。请先处理账面，或填写正常结果与账面的差异说明。');
+    const now = new Date().toISOString();
+    const r = { id: uid('check'), cartId: it.cartId, itemId: it.id, name: it.name, checker, result, findings: result === 'abnormal' ? findings : [], remark, checkedAt: now, recordedAt: now, timeSource: 'device', snapshot: JSON.parse(JSON.stringify(it)), equipmentConfirmed: fd.getAll('equipment') };
+    state.records.unshift(r); s.checked[it.id] = r.id;
+    if (result === 'normal') it.pendingRecheck = false;
+    if (s.index < s.ids.length - 1) s.index++; else s.finished = true;
+    render(); $('#screen').scrollTop = 0; window.scrollTo({ top: 0, behavior: 'instant' }); notify('仅记录了当前 1 项模拟检查，其余项目未自动确认。');
+  }
+  function showRecord(id) {
+    const r = state.records.find(x => x.id === id); if (!r) return;
+    showSheet('检查记录详情', `<h3>${e(r.name)}</h3><div class="tag-row">${flag(recordLabel(r), r.result === 'abnormal' ? 'warning' : '')}</div><dl class="key-values"><dt>检查人</dt><dd>${e(r.checker)}</dd><dt>检查时间</dt><dd>${e(timeText(r.checkedAt))}</dd><dt>时间来源</dt><dd>${r.legacy ? '未知（旧记录）' : '设备生成，原型未提供手改'}</dd><dt>记录时间</dt><dd>${r.legacy ? '旧版未记录，不用迁移时间补写' : e(timeText(r.recordedAt))}</dd><dt>异常</dt><dd>${r.legacy ? '旧版未记录' : e(r.findings.map(x => FINDINGS[x]).join('、') || '无')}</dd><dt>备注</dt><dd>${e(r.remark || '未填写')}</dd></dl><div class="notice">${r.legacy ? '不能据此认定已经逐项检查或检查正常。' : '这是模拟自报记录，不是医院正式记录，也不能证明实物安全。'}</div>${r.snapshot ? `<p class="subtle">保存时快照：${e(r.snapshot.name)} · 实际 ${e(countText(actual(r.snapshot)))} / 应有 ${r.snapshot.required === null ? '待确认' : e(r.snapshot.required)}</p>` : ''}`);
+  }
+  function showSessionRecords() {
+    const s = state.session; if (!s) return notify('还没有开始本次检查。');
+    const records = Object.values(s.checked).map(id => state.records.find(x => x.id === id));
+    showSheet('本次检查结果', `<p class="notice">已确认 ${records.length} / ${s.ids.length} 项；未确认项目没有记录为正常。</p>${records.length ? records.map(r => `<div class="result-row"><h3>${e(r.name)}</h3><p class="subtle">${e(recordLabel(r))} · ${e(r.checker)}</p>${button('查看记录详情', 'record', 'link-button', `data-id="${e(r.id)}"`)}</div>`).join('') : '<p class="subtle">尚未确认任何项目。选择范围不等于完成检查。</p>'}`);
+  }
+  function showFlow() {
+    showSheet('五页完整交互流程', `<p class="subtle" style="margin-bottom:15px">主要路径从上至下；弹窗承载建车、录入、批次等次级操作。点击节点可以体验。</p><div class="flow-diagram">${button('个人工作台：看异常 / 选择车', 'nav', '', 'data-page="home"')}<div class="flow-branch"><p class="fine">新建车弹窗 → 空清单 → 添加物品弹窗</p><p class="fine">异常入口 → 已筛选的物品清单</p></div><div class="flow-arrow">↓ 进入一台车</div>${button('抢救车物品清单：搜索 / 分类 / 筛选', 'nav', '', 'data-page="list"')}<div class="flow-arrow">↓ 选择一项</div>${button('物品详情：批次 / 数量 / 历史', 'nav', '', 'data-page="detail"')}<div class="flow-branch"><p class="fine">批次弹窗 → 添加分组 → 更新总量</p><p class="fine">使用 / 补充弹窗 → 数量变化 → 待复核</p></div><div class="flow-arrow">↓ 检查本项，或从清单逐项检查</div>${button('检查页面：逐项确认 → 本次结果 → 记录详情', 'nav', '', 'data-page="check"')}<div class="flow-arrow">↕ 底部导航随时可达</div>${button('配置中心：空模板 / 提醒 / 导出备份流程', 'nav', '', 'data-page="settings"')}<div class="flow-branch"><p class="fine">空模板 → 建车弹窗（不预填临床清单）</p><p class="fine">基础字段 → 四类扩展字段（可选）</p><p class="fine">备份恢复 → 预览 → 确认 / 校验失败</p></div></div><div class="notice">任何页面操作都只影响本次模拟。无数据库，无真实文件导入、导出或医院数据。</div>`);
+  }
+  const actions = {
+    nav: b => go(b.dataset.page), back: () => go('list'), 'close-sheet': closeSheet,
+    'create-cart': () => createCart(), 'add-item': () => itemForm(), 'edit-item': () => itemForm(true),
+    'open-cart': b => go('list', { cartId: b.dataset.id, query: '', type: 'all', filter: 'all' }),
+    item: b => go('detail', { itemId: b.dataset.id }), type: b => { state.type = b.dataset.value; render(); },
+    'clear-filters': () => { state.query = ''; state.type = 'all'; state.filter = 'all'; render(); },
+    alert: b => {
+      const key = b.dataset.filter;
+      const matches = state.items.filter(it => key === 'low' ? low(it) : hasExpiry(it, key));
+      const carts = state.carts.filter(c => matches.some(it => it.cartId === c.id));
+      if (carts.length > 1) return showSheet('选择要查看的抢救车', `<p class="subtle" style="margin-bottom:12px">工作台显示全部车的异常，清单按车查看。</p><div class="template-list">${carts.map(c => button(`${e(c.name)} · ${matches.filter(it => it.cartId === c.id).length} 项`, 'open-alert-cart', '', `data-id="${e(c.id)}" data-filter="${e(key)}"`)).join('')}</div>`);
+      go('list', { cartId: carts[0]?.id || state.cartId, query: '', type: 'all', filter: key });
+    },
+    'open-alert-cart': b => go('list', { cartId: b.dataset.id, query: '', type: 'all', filter: b.dataset.filter }),
+    'copy-cart': b => {
+      const source = state.carts.find(x => x.id === b.dataset.id); const newCart = { ...source, id: uid('cart'), name: `${source.name}（配置副本）` };
+      state.carts.push(newCart);
+      state.items.filter(x => x.cartId === source.id).forEach(it => { const copy = JSON.parse(JSON.stringify(it)); copy.id = uid('item'); copy.cartId = newCart.id; copy.pendingRecheck = false; if (copy.batches) { copy.batches = []; copy.quantityEntered = false; } else copy.actual = null; state.items.push(copy); });
+      go('list', { cartId: newCart.id, query: '', type: 'all', filter: 'all' }); notify('仅复制配置。实际数量待录入，检查记录没有复制。');
+    },
+    'add-batch': batchForm, stock: stockForm,
+    'check-list': () => startCheck(visibleItems().map(x => x.id)), 'check-item': () => startCheck([state.itemId]),
+    'skip-check': () => { const s = state.session; if (s.index < s.ids.length - 1) s.index++; else s.finished = true; render(); },
+    'next-check': () => { const s = state.session; if (s.index < s.ids.length - 1) s.index++; else s.finished = true; render(); },
+    'continue-check': () => { const s = state.session; startCheck(s.ids.filter(id => !s.checked[id])); },
+    record: b => showRecord(b.dataset.id), 'session-records': showSessionRecords,
+    'equipment-fields': () => showSheet('设备必检项目', `<form data-form="equipment"> <p class="notice">每行一项，只输入模拟项目；真实项目需要相关人员确认。</p><div class="field"><label for="equipment-projects">必检项目</label><textarea id="equipment-projects" name="checklist">${e((item().checklist || []).join('\n'))}</textarea></div><button class="primary full" type="submit">保存模拟项目</button></form>`),
+    templates: () => showSheet('科室空白模板', `<p class="notice">目前各科室使用同一组基础分类和字段。科室差异需要访谈确认，模板不含药品、规格或数量。</p><div class="template-list">${DEPARTMENTS.map(d => button(`${e(d)}<span class="subtle">空白 ›</span>`, 'use-template', '', `data-department="${e(d)}"`)).join('')}</div>`),
+    'use-template': b => createCart(b.dataset.department),
+    'custom-fields': () => showSheet('基础扩展字段', `<p class="notice">可不配置；先验证基本字段是否已经够用。不做公式、字段联动或拖拽。</p>${state.fields.length ? state.fields.map(f => `<p class="subtle">${e(f.name)} · ${e(({ text: '文本', number: '数字', date: '日期', remark: '备注' })[f.kind])}</p>`).join('') : '<p class="subtle">当前没有额外字段。</p>'}<form data-form="field" style="margin-top:17px">${field('字段名称', 'name', { required: true, placeholder: '输入一个模拟扩展字段' })}<div class="field"><label for="field-kind">字段类型</label><select id="field-kind" name="kind"><option value="text">文本</option><option value="number">数字</option><option value="date">日期</option><option value="remark">备注</option></select></div><div class="error" role="alert"></div><button type="submit" class="primary full">添加模拟字段</button></form>`),
+    rules: () => showSheet('效期提醒规则', `<form data-form="rules">${field('近效期提醒天数', 'days', { type: 'number', required: true, value: state.warningDays })}<div class="notice">这是软件提醒，不是医院标准。只有年月的效期始终显示“日期规则待确认”，不补到月底。</div><p class="fine">模拟基准日期固定 ${DEMO_DAY}，方便重复评审。</p><div class="error" role="alert"></div><button type="submit" class="primary full">应用到本次模拟</button></form>`),
+    excel: () => showSheet('Excel 导出预览', `<p class="notice">仅演示确认流程，不生成或下载真正的 XLSX。</p><p class="subtle">模拟数据：${state.carts.length} 台车 / ${state.items.length} 项物品 / ${state.records.length} 条检查登记</p><div class="export-sheets"><span>抢救车信息</span><span>物品清单（应有 / 实际数量）</span><span>批次效期（原值 / 精度 / 状态）</span><span>检查记录（结果 / 来源 / 备注）</span></div><p class="subtle">年月效期不计算倒计时，旧结果不补成正常。</p><div class="actions">${button('模拟完成导出', 'mock-excel', 'primary')}</div>`),
+    'mock-excel': () => { closeSheet(); notify('已模拟导出流程；没有生成文件，导出能力尚未开发。'); },
+    backup: () => showSheet('JSON 备份与恢复', `<p class="notice">不读写真实文件，不连接数据库。以下只预览恢复的操作与错误提示。</p><div class="split-buttons">${button('模拟生成备份', 'mock-backup')}${button('预览有效备份恢复', 'restore-preview')}${button('查看无效备份提示', 'invalid-restore')}</div><p class="subtle" style="margin-top:14px">${state.lastMockBackup ? `本次模拟备份时间：${e(state.lastMockBackup)}，并未实际存盘。` : '本次尚未演示备份操作。'}</p>`),
+    'mock-backup': () => { state.lastMockBackup = new Date().toLocaleString('zh-CN'); actions.backup(); notify('仅模拟文件生成，没有实际下载或备份。'); },
+    'restore-preview': () => showSheet('恢复前确认（模拟）', `<p class="notice warn">恢复会覆盖当前模拟状态。真正产品必须先验证文件并提供恢复前备份，再原子替换。</p><dl class="key-values"><dt>备份内容</dt><dd>1 台模拟车、5 项物品、1 条旧登记</dd><dt>当前状态</dt><dd>${state.carts.length} 台车、${state.items.length} 项物品、${state.records.length} 条登记</dd><dt>实际影响</dt><dd>只重置当前页面的模拟数据，不操作真实文件或数据库</dd></dl><div class="actions">${button('取消', 'close-sheet')}${button('确认模拟恢复', 'mock-restore', 'primary')}</div>`),
+    'invalid-restore': () => showSheet('校验失败（模拟）', `<div class="error" role="alert">模拟备份第 2 条记录缺少 ID，无法恢复。</div><p>当前模拟状态保持不变。</p><p class="subtle" style="margin-top:10px">真实产品需要实现文件校验与事务回滚；此处不是实际恢复测试结果。</p><div class="actions">${button('返回备份入口', 'backup')}</div>`),
+    'mock-restore': () => { state = seed(); closeSheet(); render(); notify('已重置为示例状态，未执行实际数据恢复。'); },
+    flow: showFlow,
+    reset: () => { if (confirm('只重置这个原型里的模拟操作。继续吗？')) { state = seed(); closeSheet(); render(); notify('模拟数据已重置。'); } }
+  };
+  document.addEventListener('click', event => {
+    const b = event.target.closest('button[data-action]'); if (!b || b.disabled) return;
+    try { actions[b.dataset.action]?.(b); } catch (err) { console.error(err); notify('原型操作未完成，请重置后重试。'); }
+  });
+  document.addEventListener('change', event => {
+    const el = event.target;
+    if (el.id === 'cart-select') return go('list', { cartId: el.value, query: '', type: 'all', filter: 'all' });
+    if (el.id === 'filter') { state.filter = el.value; render(); }
+    if (el.name === 'result') $('#findings').hidden = el.value !== 'abnormal';
+    if (el.id === 'f-precision') {
+      $('#expiry-input-wrap').hidden = el.value === 'none';
+      $('#f-expiry').placeholder = el.value === 'month' ? '2027-06（只填写年月）' : '2027-06-15（完整日期）';
+    }
+    if (el.id === 'f-type') { $('#equipment-config').hidden = el.value !== 'equipment'; $('#new-expiry').hidden = !['medicine', 'consumable'].includes(el.value); }
+  });
+  document.addEventListener('input', event => {
+    if (event.target.id !== 'search') return;
+    state.query = event.target.value; const list = visibleItems(); $('#item-rows').innerHTML = itemRows(list); $('#list-count').textContent = `${list.length} 项物品`;
+    const b = $('[data-action="check-list"]'); b.textContent = `逐项检查当前清单（${list.length} 项）`; b.disabled = !list.length;
+  });
+  document.addEventListener('submit', event => {
+    const form = event.target.closest('form[data-form]'); if (!form) return; event.preventDefault();
+    const fd = new FormData(form); const error = $('.error', form); if (error) error.textContent = '';
+    try {
+      switch (form.dataset.form) {
+        case 'cart': {
+          const name = String(fd.get('name') || '').trim(); if (!name) throw Error('请填写抢救车名称。');
+          const c = { id: uid('cart'), name, department: String(fd.get('department') || ''), location: String(fd.get('location') || ''), demo: true }; state.carts.push(c);
+          go('list', { cartId: c.id, query: '', type: 'all', filter: 'all' }); notify('已创建模拟空车，没有预填临床物品。'); break;
+        }
+        case 'item': saveItem(form, fd); break;
+        case 'batch': {
+          const it = item(), quantity = count(fd.get('quantity'), false), ex = validateExpiry(fd), before = actual(it);
+          it.batches.push({ id: uid('batch'), number: String(fd.get('number') || '').trim(), quantity, ...ex }); it.quantityEntered = true; it.pendingRecheck = true;
+          state.changes.unshift({ itemId: it.id, before, after: actual(it), label: '新增批次', reason: '模拟录入', at: new Date().toISOString() }); closeSheet(); render(); notify('模拟批次已增加，数量更新后仍待复核。'); break;
+        }
+        case 'stock': {
+          const it = item(), n = count(fd.get('quantity'), false), operation = fd.get('operation'), batch = it.batches?.find(b => b.id === fd.get('batch'));
+          const original = batch ? batch.quantity : it.actual;
+          if (original === null && operation !== 'adjust') throw Error('实际数量未知，请先选择盘点更正并录入数量。');
+          const value = operation === 'use' ? original - n : operation === 'replenish' ? original + n : n;
+          if (value < 0) throw Error('使用数量不能超过当前批次数量。');
+          if (!Number.isSafeInteger(value)) throw Error('数量超出这个原型的整数范围，请缩小模拟数值。');
+          const before = actual(it); if (batch) batch.quantity = value; else it.actual = value; it.pendingRecheck = true;
+          state.changes.unshift({ itemId: it.id, before, after: actual(it), label: ({ use: '使用', replenish: '补充', adjust: '盘点更正' })[operation], reason: String(fd.get('reason') || '').trim(), at: new Date().toISOString() }); closeSheet(); render(); notify('只更新了模拟数量和变化记录，尚未完成复核。'); break;
+        }
+        case 'check': saveCheck(form, fd); break;
+        case 'equipment': item().checklist = String(fd.get('checklist') || '').split('\n').map(x => x.trim()).filter(Boolean); closeSheet(); render(); notify('已修改模拟项目，真实规则须由医院确认。'); break;
+        case 'rules': { const n = count(fd.get('days'), false); if (n > 3650) throw Error('原型提醒范围为 0 至 3650 天，请缩小输入。'); state.warningDays = n; closeSheet(); render(); notify('仅本次模拟已采用新的提醒天数。'); break; }
+        case 'field': { const name = String(fd.get('name') || '').trim(); if (!name) throw Error('请填写字段名称。'); if (state.fields.some(f => f.name === name)) throw Error('已有同名扩展字段。'); state.fields.push({ id: uid('field'), name, kind: fd.get('kind') }); actions['custom-fields'](); notify('已添加模拟字段，在添加或编辑物品的可选信息中填写。'); break; }
+      }
+    } catch (err) { if (error) error.textContent = err.message; else notify(err.message); }
+  });
+  render();
+})();
+
+</script>
+</body>
+</html>

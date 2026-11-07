@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "test": "vitest run",
-    "build": "node scripts/icons.mjs && vite build",
+    "build": "node scripts/icons.mjs && node scripts/licenses.mjs && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "licenses": "node scripts/licenses.mjs"
   },

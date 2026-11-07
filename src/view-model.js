@@ -1,4 +1,7 @@
 import { emptyData, uid } from './domain.js';
+export function createStockChange(item, details) {
+  return {...details,id:uid('change'),cartId:item.cartId,itemId:item.id,at:new Date().toISOString()};
+}
 export function hydrate(snapshot, prior={}) {
   const data=snapshot.data;
   const settings=Object.fromEntries(data.settings.map(r=>[r.key,r.value]));
